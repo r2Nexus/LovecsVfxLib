@@ -9,3 +9,5 @@ riderModule.iml
 .godot/
 **/.godot/
 .import/
+*.png.kra
+*.png~
