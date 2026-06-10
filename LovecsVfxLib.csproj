@@ -63,8 +63,6 @@
         <Folder Include="LovecsVfxLib\images\card_portraits\big\"/>
         <Folder Include="LovecsVfxLib\images\powers\big\"/>
         <Folder Include="LovecsVfxLib\images\relics\big\"/>
-        <Folder Include="LovecsVfxLib\images\vfx\" />
-        <Folder Include="LovecsVfxLib\scenes\vfx\" />
     </ItemGroup>
 
     <Target Name="CheckDependencyPaths">
