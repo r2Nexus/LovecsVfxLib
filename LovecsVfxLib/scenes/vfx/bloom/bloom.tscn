@@ -1,0 +1,83 @@
+[gd_scene load_steps=10 format=3 uid="uid://cjwkid6ap1j6u"]
+
+[ext_resource type="Texture2D" uid="uid://xw4r3fsuxsrr" path="res://LovecsVfxLib/images/vfx/petal.png" id="1_asjk1"]
+[ext_resource type="Script" uid="uid://f45p4gcirxkt" path="res://LovecsVfxLibCode/Vfx/NLovecSimpleVfx.cs" id="1_jnxl3"]
+[ext_resource type="Material" uid="uid://c3fxm568kdicv" path="res://LovecsVfxLib/scenes/vfx/bloom/bloom_petal.tres" id="2_jnxl3"]
+[ext_resource type="Texture2D" uid="uid://y0nhkcfipqfr" path="res://LovecsVfxLib/images/vfx/polen.png" id="4_qevm1"]
+
+[sub_resource type="Curve" id="Curve_gt1ex"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.033248078, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_grp0x"]
+curve = SubResource("Curve_gt1ex")
+
+[sub_resource type="Curve" id="Curve_qf7jh"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.056265984, 1), 0.0, 0.0, 0, 0, Vector2(1, 0.49901193), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_qnlus"]
+curve = SubResource("Curve_qf7jh")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_vv755"]
+particle_flag_disable_z = true
+spread = 150.0
+initial_velocity_min = 120.0
+initial_velocity_max = 240.0
+gravity = Vector3(0, 300, 0)
+scale_min = 0.5
+scale_max = 2.0
+scale_curve = SubResource("CurveTexture_qnlus")
+alpha_curve = SubResource("CurveTexture_grp0x")
+
+[node name="Bloom" type="Node2D"]
+script = ExtResource("1_jnxl3")
+
+[node name="GPUParticles2D" type="GPUParticles2D" parent="."]
+rotation = -1.5707964
+emitting = false
+amount = 1
+texture = ExtResource("1_asjk1")
+one_shot = true
+process_material = ExtResource("2_jnxl3")
+
+[node name="GPUParticles2D2" type="GPUParticles2D" parent="."]
+rotation = -0.31415927
+emitting = false
+amount = 1
+texture = ExtResource("1_asjk1")
+one_shot = true
+process_material = ExtResource("2_jnxl3")
+
+[node name="GPUParticles2D3" type="GPUParticles2D" parent="."]
+rotation = -2.8274333
+emitting = false
+amount = 1
+texture = ExtResource("1_asjk1")
+one_shot = true
+process_material = ExtResource("2_jnxl3")
+
+[node name="GPUParticles2D4" type="GPUParticles2D" parent="."]
+rotation = -4.0840707
+emitting = false
+amount = 1
+texture = ExtResource("1_asjk1")
+one_shot = true
+process_material = ExtResource("2_jnxl3")
+
+[node name="GPUParticles2D5" type="GPUParticles2D" parent="."]
+rotation = 0.9424778
+emitting = false
+amount = 1
+texture = ExtResource("1_asjk1")
+one_shot = true
+process_material = ExtResource("2_jnxl3")
+
+[node name="GPUParticles2D6" type="GPUParticles2D" parent="."]
+rotation = -1.5707964
+emitting = false
+amount = 7
+texture = ExtResource("4_qevm1")
+one_shot = true
+explosiveness = 0.95
+process_material = SubResource("ParticleProcessMaterial_vv755")

@@ -1,0 +1,47 @@
+[gd_resource type="ParticleProcessMaterial" load_steps=9 format=3 uid="uid://c3fxm568kdicv"]
+
+[sub_resource type="Curve" id="Curve_uwv5u"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.10485934, 1), 0.0, 0.0, 0, 0, Vector2(1, 0.5054349), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_1vrpm"]
+curve = SubResource("Curve_uwv5u")
+
+[sub_resource type="Curve" id="Curve_eelyn"]
+_limits = [-200.0, 200.0, 0.0, 1.0]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 200), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_hln8a"]
+curve = SubResource("Curve_eelyn")
+
+[sub_resource type="Curve" id="Curve_erp24"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.12531969, 0.9550396), 3.568781, 3.568781, 0, 0, Vector2(0.28644502, 1), -0.8371205, -0.8371205, 0, 0, Vector2(1, 0.010869622), 0.0, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="CurveTexture" id="CurveTexture_ejv8n"]
+curve = SubResource("Curve_erp24")
+
+[sub_resource type="Curve" id="Curve_gasjg"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_ciug7"]
+curve = SubResource("Curve_gasjg")
+
+[resource]
+particle_flag_align_y = true
+particle_flag_disable_z = true
+spread = 0.0
+initial_velocity_min = 150.0
+initial_velocity_max = 150.0
+gravity = Vector3(0, 0, 0)
+linear_accel_min = -2.2351742e-06
+linear_accel_max = 24.999998
+linear_accel_curve = SubResource("CurveTexture_hln8a")
+scale_curve = SubResource("CurveTexture_ejv8n")
+alpha_curve = SubResource("CurveTexture_1vrpm")
+turbulence_enabled = true
+turbulence_noise_scale = 8000.0
+turbulence_noise_speed_random = 0.0
+turbulence_influence_over_life = SubResource("CurveTexture_ciug7")

@@ -14,7 +14,7 @@ public static class LovecVfx
         => Hit(target, "explosion");
 
     public static Node2D? Hex(Creature target)
-        => Hit(target, "hex");
+        => Hit(target, "hex/hex");
 
     public static Node2D? Charm(Creature target)
         => Hit(target, "charm");
@@ -23,7 +23,7 @@ public static class LovecVfx
         => Hit(target, "bite");
 
     public static Node2D? Bloom(Creature target)
-        => Hit(target, "bloom");
+        => Hit(target, "bloom/bloom");
 
     private static Node2D? Hit(Creature target, string name)
     {
