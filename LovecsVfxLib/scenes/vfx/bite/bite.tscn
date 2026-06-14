@@ -1,0 +1,95 @@
+[gd_scene load_steps=13 format=3 uid="uid://dmmfh1xt40d0y"]
+
+[ext_resource type="Texture2D" uid="uid://buvvv7avblp7g" path="res://LovecsVfxLib/images/vfx/bite.png" id="1_ihlkx"]
+[ext_resource type="Script" uid="uid://f45p4gcirxkt" path="res://LovecsVfxLibCode/Vfx/NLovecSimpleVfx.cs" id="1_ms7fi"]
+[ext_resource type="Material" uid="uid://b2oaqkywo5san" path="res://LovecsVfxLib/scenes/vfx/bite/jaw.tres" id="2_ms7fi"]
+[ext_resource type="Texture2D" uid="uid://0cx50flkri5y" path="res://LovecsVfxLib/images/vfx/fragments.png" id="4_eatlk"]
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_ug3j4"]
+blend_mode = 1
+particles_animation = true
+particles_anim_h_frames = 3
+particles_anim_v_frames = 3
+particles_anim_loop = false
+
+[sub_resource type="Curve" id="Curve_oo82a"]
+_data = [Vector2(1e-05, 0), 0.0, 0.0, 0, 0, Vector2(0.24808183, 0), 0.0, 0.0, 0, 0, Vector2(0.38618925, 1), 0.0, 0.0, 0, 0, Vector2(1, 0.5247036), 0.0, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="CurveTexture" id="CurveTexture_f0p0b"]
+curve = SubResource("Curve_oo82a")
+
+[sub_resource type="Curve" id="Curve_hnewe"]
+_data = [Vector2(0, 0.5054349), 0.0, 0.0, 0, 0, Vector2(0.314578, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="Curve" id="Curve_owbci"]
+_data = [Vector2(0, 0.5054349), 0.0, 0.0, 0, 0, Vector2(0.33503836, 1), 0.0, 0.0, 0, 0, Vector2(1, 0.80731237), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="Curve" id="Curve_nqr2j"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveXYZTexture" id="CurveXYZTexture_5eh13"]
+curve_x = SubResource("Curve_hnewe")
+curve_y = SubResource("Curve_owbci")
+curve_z = SubResource("Curve_nqr2j")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_2blyw"]
+particle_flag_align_y = true
+particle_flag_disable_z = true
+spread = 25.0
+initial_velocity_min = 250.0
+initial_velocity_max = 350.0
+gravity = Vector3(0, 98, 0)
+scale_max = 2.0
+scale_curve = SubResource("CurveXYZTexture_5eh13")
+alpha_curve = SubResource("CurveTexture_f0p0b")
+anim_offset_max = 1.0
+
+[node name="Bite" type="Node2D"]
+script = ExtResource("1_ms7fi")
+
+[node name="Upper" type="GPUParticles2D" parent="."]
+position = Vector2(0, -80)
+emitting = false
+amount = 1
+texture = ExtResource("1_ihlkx")
+lifetime = 0.4
+one_shot = true
+local_coords = true
+process_material = ExtResource("2_ms7fi")
+
+[node name="Lower" type="GPUParticles2D" parent="."]
+position = Vector2(0, 80)
+rotation = 3.1415927
+scale = Vector2(0.9, 0.9)
+emitting = false
+amount = 1
+texture = ExtResource("1_ihlkx")
+lifetime = 0.4
+one_shot = true
+local_coords = true
+process_material = ExtResource("2_ms7fi")
+
+[node name="Fragments R" type="GPUParticles2D" parent="."]
+material = SubResource("CanvasItemMaterial_ug3j4")
+emitting = false
+amount = 5
+texture = ExtResource("4_eatlk")
+lifetime = 0.5
+one_shot = true
+explosiveness = 0.9
+process_material = SubResource("ParticleProcessMaterial_2blyw")
+
+[node name="Fragments L" type="GPUParticles2D" parent="."]
+material = SubResource("CanvasItemMaterial_ug3j4")
+rotation = 3.1415927
+emitting = false
+amount = 5
+texture = ExtResource("4_eatlk")
+lifetime = 0.5
+one_shot = true
+explosiveness = 0.9
+process_material = SubResource("ParticleProcessMaterial_2blyw")

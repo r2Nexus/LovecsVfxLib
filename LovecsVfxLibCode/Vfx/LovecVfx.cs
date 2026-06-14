@@ -20,7 +20,7 @@ public static class LovecVfx
         => Hit(target, "charm");
 
     public static Node2D? Bite(Creature target)
-        => Hit(target, "bite");
+        => Hit(target, "bite/bite");
 
     public static Node2D? Bloom(Creature target)
         => Hit(target, "bloom/bloom");

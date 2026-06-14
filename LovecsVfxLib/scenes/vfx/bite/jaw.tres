@@ -1,0 +1,60 @@
+[gd_resource type="ParticleProcessMaterial" load_steps=13 format=3 uid="uid://b2oaqkywo5san"]
+
+[sub_resource type="Curve" id="Curve_m6lvy"]
+_data = [Vector2(0.0025575422, 0), 0.0, 0.0, 0, 0, Vector2(0.061381076, 1), 0.0, 0.0, 0, 0, Vector2(0.89514065, 1), 0.0, 0.0, 0, 0, Vector2(1, 0.85869575), 0.0, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="CurveTexture" id="CurveTexture_m8upe"]
+curve = SubResource("Curve_m6lvy")
+
+[sub_resource type="Gradient" id="Gradient_m6lvy"]
+colors = PackedColorArray(0.74001515, 0.80899835, 0.8503898, 1, 1, 1, 1, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_m8upe"]
+gradient = SubResource("Gradient_m6lvy")
+
+[sub_resource type="Curve" id="Curve_kqlb4"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.099744245, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveXYZTexture" id="CurveXYZTexture_fh5ft"]
+curve_y = SubResource("Curve_kqlb4")
+
+[sub_resource type="Curve" id="Curve_m226y"]
+_data = [Vector2(0.35549873, 0), 0.0, 0.0, 0, 0, Vector2(0.50127876, 1), 0.0, 0.0, 0, 0, Vector2(0.71099746, 0.67885387), 0.23361465, 0.23361465, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="CurveTexture" id="CurveTexture_yo5hl"]
+curve = SubResource("Curve_m226y")
+
+[sub_resource type="Curve" id="Curve_7p44n"]
+_data = [Vector2(0, 0.51185775), 0.0, 0.0, 0, 0, Vector2(0.25063938, 0.80731237), 0.0, 0.0, 0, 0, Vector2(0.7570332, 1), 0.0, 0.0, 0, 0, Vector2(1, 0.85869575), 0.0, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="Curve" id="Curve_8n5w6"]
+_data = [Vector2(0, 0.8715416), 0.0, 0.0, 0, 0, Vector2(0.084398985, 1), 0.0, 0.0, 0, 0, Vector2(1, 0.8651186), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="Curve" id="Curve_sev8k"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveXYZTexture" id="CurveXYZTexture_oa21k"]
+curve_x = SubResource("Curve_7p44n")
+curve_y = SubResource("Curve_8n5w6")
+curve_z = SubResource("Curve_sev8k")
+
+[resource]
+particle_flag_disable_z = true
+angle_min = -6.9999895
+angle_max = 7.000011
+direction = Vector3(0, 1, 0)
+spread = 0.0
+directional_velocity_min = 419.99997
+directional_velocity_max = 419.99997
+directional_velocity_curve = SubResource("CurveXYZTexture_fh5ft")
+gravity = Vector3(0, 0, 0)
+scale_curve = SubResource("CurveXYZTexture_oa21k")
+color_ramp = SubResource("GradientTexture1D_m8upe")
+alpha_curve = SubResource("CurveTexture_m8upe")
+emission_curve = SubResource("CurveTexture_yo5hl")
