@@ -7,6 +7,8 @@ public static class LovecVfx
 {
     private const string Root = "res://LovecsVfxLib/scenes/vfx/";
 
+    //stuff I want to make blink, small flame, death skull, plink/bounce, orbital beam, slap, siphon, elements, ice, splash, looney tunes fight cloud, earthquake, chain seal, hack
+    
     public static Node2D? PurpleSplash(Creature target)
         => Hit(target, "purple_splash");
     
