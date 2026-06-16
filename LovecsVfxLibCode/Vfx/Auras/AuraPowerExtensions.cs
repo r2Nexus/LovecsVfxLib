@@ -67,13 +67,8 @@ public static class AuraPowerExtensions
         string? scenePath,
         AuraSpec spec)
     {
-        AuraSpec completedSpec = spec with
-        {
-            Icon = spec.Icon ?? power.Icon
-        };
-
         return AuraCmd.Apply(
-            new PowerAuraController(power, completedSpec),
+            new PowerAuraController(power, spec),
             scenePath);
     }
 }

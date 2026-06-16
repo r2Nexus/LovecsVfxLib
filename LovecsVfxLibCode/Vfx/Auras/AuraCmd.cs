@@ -1,5 +1,4 @@
 using Godot;
-using MegaCrit.Sts2.Core.Assets;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Helpers;
 using MegaCrit.Sts2.Core.TestSupport;
@@ -32,6 +31,8 @@ public static class AuraCmd
 
         Node anchor = GetOrCreateAnchor(container);
 
+        controller.Prepare();
+        
         string auraKey = controller.Spec.AuraKey
                          ?? AuraKeys.ForController(controller, scenePath);
 
@@ -55,24 +56,7 @@ public static class AuraCmd
 
     private static LovecAura? InstantiateAura(string? scenePath)
     {
-        string path = scenePath ?? DefaultAuraScenePath;
-        string resolvedPath = ResolveScenePath(path);
-
-        if (!ResourceLoader.Exists(resolvedPath))
-        {
-            GD.PushWarning($"[AuraCmd] Aura scene not found: {path} resolved to {resolvedPath}.");
-            return null;
-        }
-
-        PackedScene scene = PreloadManager.Cache.GetScene(resolvedPath);
-        Node node = scene.Instantiate();
-
-        if (node is LovecAura aura)
-            return aura;
-
-        GD.PushWarning($"[AuraCmd] Aura scene root must inherit LovecAura: {resolvedPath}");
-        node.QueueFree();
-        return null;
+        return new DefaultLovecAura();
     }
     
     public static void UpdateAuraPosition(LovecAura aura, AuraController controller)

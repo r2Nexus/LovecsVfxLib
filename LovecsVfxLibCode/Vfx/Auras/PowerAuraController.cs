@@ -1,3 +1,4 @@
+using Godot;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Models;
 
@@ -19,9 +20,23 @@ public sealed class PowerAuraController : AuraController
 
     protected override AuraSpec CompleteSpec(AuraSpec spec)
     {
+        Texture2D? icon = spec.Icon;
+
+        if (icon == null)
+        {
+            try
+            {
+                icon = Power.Icon;
+            }
+            catch
+            {
+                icon = null;
+            }
+        }
+
         return spec with
         {
-            Icon = spec.Icon ?? Power.Icon,
+            Icon = icon,
             AuraKey = spec.AuraKey ?? AuraKeys.ForPower(Power)
         };
     }
