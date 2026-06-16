@@ -1,87 +1,73 @@
 using Godot;
+using LovecsVfxLibCode.Auras;
 using MegaCrit.Sts2.Core.Assets;
-using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Helpers;
-using MegaCrit.Sts2.Core.Nodes;
-using MegaCrit.Sts2.Core.Nodes.Combat;
 using MegaCrit.Sts2.Core.TestSupport;
-using System.Runtime.CompilerServices;
 
-namespace LovecsVfxLibCode.Auras;
+namespace LovecsVfxLibCode.Vfx.Auras;
 
 public static class AuraCmd
 {
     public const string AuraAnchorName = "LovecAuraAnchor";
-    
-    public static string? DefaultAuraScenePath { get; set; }
-        = "res://LovecsVfxLib/scenes/vfx/auras/DefaultLovecAura.tscn";
-    
+
+    public static string DefaultAuraScenePath { get; set; } =
+        "res://LovecsVfxLib/scenes/vfx/auras/DefaultLovecAura.tscn";
+
     public static LovecAura? Apply(AuraController controller)
     {
-        ArgumentNullException.ThrowIfNull(controller);
-
         if (TestMode.IsOn)
             return null;
 
         Creature target = controller.Target;
+
         if (target == null || target.IsDead)
-        {
-            controller.Dispose();
             return null;
-        }
 
-        Control? vfxContainer = target.GetVfxContainer();
-        NCreature? creatureNode = target.GetCreatureNode();
+        Control? container = target.GetVfxContainer();
 
-        if (vfxContainer == null || creatureNode == null)
-        {
-            GD.PushWarning($"[LovecAura] Could not resolve VFX container/creature node for {target}.");
-            controller.Dispose();
+        if (container == null)
             return null;
-        }
 
-        Node2D anchor = GetOrCreateAnchor(vfxContainer, target);
-        return ApplyToAnchor(anchor, controller);
-    }
-    
-    public static LovecAura ApplyToAnchor(Node anchor, AuraController controller)
-    {
-        ArgumentNullException.ThrowIfNull(anchor);
-        ArgumentNullException.ThrowIfNull(controller);
+        Node anchor = GetOrCreateAnchor(container);
 
-        string key = AuraKeys.ForController(controller);
+        string auraKey = controller.Spec.AuraKey
+            ?? AuraKeys.ForController(controller);
 
-        LovecAura? existing = anchor.GetNodeOrNull<LovecAura>(key);
-        if (existing != null)
+        if (anchor.GetNodeOrNull<LovecAura>(auraKey) is { } existing)
         {
             existing.Bind(controller);
-            UpdateAuraPosition(existing, controller);
             return existing;
         }
 
-        LovecAura aura = InstantiateAura(controller.Spec);
-        aura.Name = key;
+        LovecAura? aura = InstantiateAura(controller.Spec);
 
+        if (aura == null)
+            return null;
+
+        aura.Name = auraKey;
         anchor.AddChildSafely(aura);
         aura.Bind(controller);
-        UpdateAuraPosition(aura, controller);
 
         return aura;
     }
-
-    public static void Remove(Creature target, string auraKey)
+    
+    public static void UpdateAuraPosition(LovecAura aura, AuraController controller)
     {
-        if (TestMode.IsOn || target == null)
+        Creature target = controller.Target;
+
+        if (target == null || target.IsDead)
+        {
+            controller.Remove();
+            return;
+        }
+
+        var creatureNode = target.GetCreatureNode();
+
+        if (creatureNode == null)
             return;
 
-        Control? vfxContainer = target.GetVfxContainer();
-        if (vfxContainer == null)
-            return;
-
-        Node? anchor = GetAuraAnchor(vfxContainer, target);
-        LovecAura? aura = anchor?.GetNodeOrNull<LovecAura>(auraKey);
-        aura?.Remove();
+        aura.GlobalPosition = creatureNode.VfxSpawnPosition + controller.Spec.Offset;
     }
 
     public static void Remove(AuraController controller)
@@ -94,96 +80,52 @@ public static class AuraCmd
         controller.Sync();
     }
 
-    public static Node2D GetOrCreateAnchor(Control vfxContainer, Creature target)
+    private static Node GetOrCreateAnchor(Node container)
     {
-        string anchorName = GetAnchorName(target);
-
-        Node2D? existing = vfxContainer.GetNodeOrNull<Node2D>(anchorName);
-        if (existing != null)
+        if (container.GetNodeOrNull<Node>(AuraAnchorName) is { } existing)
             return existing;
 
-        Node2D anchor = new()
+        var anchor = new Node2D
         {
-            Name = anchorName,
-            ZIndex = 100
+            Name = AuraAnchorName,
+            ZIndex = 0
         };
 
-        vfxContainer.AddChildSafely(anchor);
+        container.AddChildSafely(anchor);
         return anchor;
     }
 
-    public static Node2D? GetAuraAnchor(Control vfxContainer, Creature target)
+    private static LovecAura? InstantiateAura(AuraSpec spec)
     {
-        return vfxContainer.GetNodeOrNull<Node2D>(GetAnchorName(target));
-    }
+        string path = spec.ScenePath ?? DefaultAuraScenePath;
+        string resolvedPath = ResolveScenePath(path);
 
-    public static string GetAnchorName(Creature target)
-    {
-        // VFX containers are shared, so anchors must be per-creature.
-        // RuntimeHelpers hash is enough for a combat-lifetime visual node name.
-        return $"{AuraAnchorName}_{RuntimeHelpers.GetHashCode(target)}";
-    }
-
-    public static LovecAura InstantiateAura(AuraSpec spec)
-    {
-        string? scenePath = spec.ScenePath ?? DefaultAuraScenePath;
-
-        if (!string.IsNullOrWhiteSpace(scenePath))
+        if (!ResourceLoader.Exists(resolvedPath))
         {
-            string resolvedPath = AuraPathAliases.Resolve(scenePath);
+            GD.PushWarning(
+                $"[AuraCmd] Aura scene not found: {path} resolved to {resolvedPath}.");
 
-            if (ResourceLoader.Exists(resolvedPath))
-            {
-                Node node = PreloadManager.Cache.GetScene(resolvedPath).Instantiate();
-
-                if (node is LovecAura aura)
-                    return aura;
-
-                node.QueueFree();
-                throw new InvalidOperationException(
-                    $"Aura scene root must inherit LovecAura: {resolvedPath}");
-            }
-
-            GD.PushWarning($"[LovecAura] Aura scene not found: {scenePath} resolved to {resolvedPath}. Using programmatic DefaultLovecAura.");
+            return null;
         }
 
-        return new DefaultLovecAura();
+        PackedScene scene = PreloadManager.Cache.GetScene(resolvedPath);
+        Node node = scene.Instantiate();
+
+        if (node is LovecAura aura)
+            return aura;
+
+        GD.PushWarning(
+            $"[AuraCmd] Aura scene root must inherit LovecAura: {resolvedPath}");
+
+        node.QueueFree();
+        return null;
     }
 
-    public static void UpdateAuraPosition(LovecAura aura, AuraController controller)
+    private static string ResolveScenePath(string path)
     {
-        AuraSpec spec = controller.Spec;
+        if (path.StartsWith("res://"))
+            return path;
 
-        if (!spec.FollowTarget)
-        {
-            aura.Position = spec.Offset;
-            return;
-        }
-
-        Vector2? position = GetAuraPosition(controller.Target, spec);
-        if (position.HasValue)
-            aura.GlobalPosition = position.Value;
-        else
-            controller.Remove();
-    }
-
-    public static Vector2? GetAuraPosition(Creature target, AuraSpec spec)
-    {
-        if (TestMode.IsOn || target == null || target.IsDead)
-            return null;
-
-        NCreature? creatureNode = target.GetCreatureNode();
-        if (creatureNode == null)
-            return null;
-
-        Vector2 position = spec.PositionMode switch
-        {
-            AuraPositionMode.CreatureOrigin => creatureNode.GlobalPosition,
-            AuraPositionMode.HitboxBottom => creatureNode.GetBottomOfHitbox(),
-            AuraPositionMode.VfxSpawnPosition => creatureNode.VfxSpawnPosition,
-            _ => creatureNode.VfxSpawnPosition
-        };
-
-        return position + spec.Offset;
+        return SceneHelper.GetScenePath(path);
     }
 }

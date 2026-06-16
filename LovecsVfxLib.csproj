@@ -60,7 +60,8 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Folder Include="LovecsVfxLibCode\Vfx\Auras\Examples\" />
+        <Folder Include="LovecsVfxLibCode\Vfx\Auras\Controllers\" />
+        <Folder Include="LovecsVfxLibCode\Vfx\Auras\Specs\" />
         <Folder Include="LovecsVfxLib\images\card_portraits\big\"/>
         <Folder Include="LovecsVfxLib\images\powers\big\"/>
         <Folder Include="LovecsVfxLib\images\relics\big\"/>

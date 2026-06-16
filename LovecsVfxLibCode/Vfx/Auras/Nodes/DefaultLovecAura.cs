@@ -1,4 +1,5 @@
 using Godot;
+using LovecsVfxLibCode.Vfx.Auras;
 
 namespace LovecsVfxLibCode.Auras;
 

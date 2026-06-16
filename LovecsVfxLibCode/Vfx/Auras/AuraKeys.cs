@@ -1,3 +1,4 @@
+using LovecsVfxLibCode.Vfx.Auras;
 using MegaCrit.Sts2.Core.Models;
 
 namespace LovecsVfxLibCode.Auras;

@@ -1,53 +1,59 @@
 using Godot;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 
-namespace LovecsVfxLibCode.Auras;
+namespace LovecsVfxLibCode.Vfx.Auras;
 
 public abstract class AuraController : IDisposable
 {
     private bool _isAttached;
-    private bool _isDisposed;
 
     public abstract Creature Target { get; }
+
+    public AuraSpec Spec { get; private set; }
 
     public LovecAura? View { get; private set; }
 
     public virtual decimal Amount => 1m;
 
-    public virtual AuraSpec Spec => AuraSpec.Default;
-
-    public bool IsAttached => _isAttached;
-    public bool IsDisposed => _isDisposed;
+    protected AuraController(AuraSpec? spec = null)
+    {
+        Spec = spec ?? AuraSpec.Default;
+    }
 
     internal void AttachToView(LovecAura view)
     {
-        if (_isDisposed)
-            throw new ObjectDisposedException(GetType().Name);
-
-        if (View == view && _isAttached)
+        if (ReferenceEquals(View, view) && _isAttached)
         {
             Sync();
             return;
         }
 
-        if (View != null)
-            DetachFromView();
+        DetachFromView();
 
         View = view;
+        Spec = CompleteSpec(Spec);
+
         _isAttached = true;
         OnAttached();
+
         Sync();
     }
 
     internal void DetachFromView()
     {
         if (!_isAttached)
+        {
+            View = null;
             return;
+        }
 
         _isAttached = false;
         OnDetached();
         View = null;
     }
+
+    protected virtual AuraSpec CompleteSpec(AuraSpec spec)
+        => spec;
 
     protected virtual void OnAttached()
     {
@@ -57,57 +63,42 @@ public abstract class AuraController : IDisposable
     {
     }
 
+    public virtual float GetIntensity()
+    {
+        return Mathf.Clamp(
+            (float)Amount * Spec.AmountScale,
+            Spec.MinIntensity,
+            Spec.MaxIntensity);
+    }
+
+    public virtual bool ShouldRemove()
+    {
+        return Target == null || Target.IsDead;
+    }
+
     public virtual void Sync()
     {
-        if (_isDisposed)
-            return;
-
-        if (View == null)
-            return;
-
         if (ShouldRemove())
         {
             Remove();
             return;
         }
 
-        View.SyncFromController(this);
-    }
-
-    public virtual bool ShouldRemove()
-    {
-        AuraSpec spec = Spec;
-
-        if (spec.RemoveAtZero && Amount <= 0)
-            return true;
-
-        Creature target = Target;
-        return target == null || !target.IsAlive;
-    }
-
-    public virtual float GetIntensity()
-    {
-        AuraSpec spec = Spec;
-
-        return Mathf.Clamp(
-            (float)Amount * spec.AmountScale,
-            spec.MinIntensity,
-            spec.MaxIntensity);
+        View?.SyncFromController(this);
     }
 
     public virtual void Remove()
     {
-        View?.Remove();
-        Dispose();
+        LovecAura? view = View;
+
+        DetachFromView();
+
+        if (view != null && GodotObject.IsInstanceValid(view) && !view.IsQueuedForDeletion())
+            view.QueueFree();
     }
 
-    public void Dispose()
+    public virtual void Dispose()
     {
-        if (_isDisposed)
-            return;
-
-        _isDisposed = true;
-        DetachFromView();
-        GC.SuppressFinalize(this);
+        Remove();
     }
 }
