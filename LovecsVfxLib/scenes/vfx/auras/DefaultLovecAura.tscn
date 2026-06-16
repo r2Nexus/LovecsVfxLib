@@ -1,0 +1,85 @@
+[gd_scene load_steps=13 format=3 uid="uid://cusg4uiefdto4"]
+
+[ext_resource type="Script" uid="uid://c1n0a4dglodh1" path="res://LovecsVfxLibCode/Vfx/Auras/Nodes/DefaultLovecAura.cs" id="1_wrkgd"]
+[ext_resource type="Texture2D" uid="uid://0cx50flkri5y" path="res://LovecsVfxLib/images/vfx/fragments.png" id="2_8py74"]
+
+[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_ffle5"]
+size = Vector2(64, 64)
+
+[sub_resource type="Curve" id="Curve_7qe5q"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.25063938, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), -5.124995, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_55t71"]
+curve = SubResource("Curve_7qe5q")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_m3c60"]
+resource_local_to_scene = true
+particle_flag_disable_z = true
+emission_shape_offset = Vector3(0, 50, 0)
+emission_shape = 1
+emission_sphere_radius = 90.0
+gravity = Vector3(0, -120, 0)
+linear_accel_min = -2.2351742e-06
+linear_accel_max = 49.999996
+scale_min = 0.5
+scale_max = 0.7
+scale_curve = SubResource("CurveTexture_55t71")
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_3ee3l"]
+particles_animation = true
+particles_anim_h_frames = 3
+particles_anim_v_frames = 3
+particles_anim_loop = false
+
+[sub_resource type="Curve" id="Curve_he1j0"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.26086956, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_57mwq"]
+curve = SubResource("Curve_he1j0")
+
+[sub_resource type="Curve" id="Curve_cch3u"]
+_data = [Vector2(0, 0.5054349), 0.0, 0.0, 0, 0, Vector2(0.49872124, 1), 0.0, 0.0, 0, 0, Vector2(1, 0.47974312), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_qutov"]
+curve = SubResource("Curve_cch3u")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_3vpao"]
+resource_local_to_scene = true
+particle_flag_disable_z = true
+emission_shape_offset = Vector3(0, 80, 0)
+emission_shape = 1
+emission_sphere_radius = 100.0
+angle_min = -720.0
+angle_max = 720.0
+initial_velocity_min = -30.0
+initial_velocity_max = 30.0
+gravity = Vector3(0, -98, 0)
+scale_min = 0.39999998
+scale_max = 0.79999995
+scale_curve = SubResource("CurveTexture_qutov")
+alpha_curve = SubResource("CurveTexture_57mwq")
+hue_variation_min = -0.050000023
+hue_variation_max = 0.049999975
+anim_offset_max = 1.0
+turbulence_noise_strength = 0.1
+
+[node name="DefaultLovecAura" type="Node2D"]
+script = ExtResource("1_wrkgd")
+
+[node name="IconParticles" type="GPUParticles2D" parent="."]
+amount = 12
+amount_ratio = 0.2
+texture = SubResource("PlaceholderTexture2D_ffle5")
+lifetime = 1.5999999999999999
+process_material = SubResource("ParticleProcessMaterial_m3c60")
+
+[node name="ColorParticles" type="GPUParticles2D" parent="."]
+material = SubResource("CanvasItemMaterial_3ee3l")
+amount = 24
+amount_ratio = 0.2
+texture = ExtResource("2_8py74")
+lifetime = 2.0
+process_material = SubResource("ParticleProcessMaterial_3vpao")
