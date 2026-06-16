@@ -1,7 +1,6 @@
 using System;
 using System.Reflection;
 using Godot;
-using LovecsVfxLibCode.Auras;
 using MegaCrit.Sts2.Core.Models;
 
 namespace LovecsVfxLibCode.Vfx.Auras;
@@ -9,16 +8,18 @@ namespace LovecsVfxLibCode.Vfx.Auras;
 public static class AuraPowerExtensions
 {
     public static LovecAura? WithAura(this PowerModel power)
-    {
-        return power.WithAura(AuraSpec.Default);
-    }
+        => AuraCmd.Apply(new PowerAuraController(power, DefaultAuraSpec.Empty));
 
     public static LovecAura? WithAura(
         this PowerModel power,
         Color color,
         float amountScale = 0.05f)
     {
-        return power.WithAura(AuraSpec.FromColor(color, amountScale));
+        return AuraCmd.Apply(
+            new PowerAuraController(
+                power,
+                DefaultAuraSpec.WithColor(color),
+                amountScale));
     }
 
     public static LovecAura? WithAura(
@@ -26,21 +27,18 @@ public static class AuraPowerExtensions
         string scenePath,
         float amountScale = 0.05f)
     {
-        return power.WithAura(AuraSpec.FromScene(scenePath, amountScale));
-    }
-
-    public static LovecAura? WithAura(
-        this PowerModel power,
-        AuraSpec spec)
-    {
-        return AuraCmd.Apply(new PowerAuraController(power, spec));
+        return AuraCmd.Apply(
+            new PowerAuraController(
+                power,
+                AuraSpec.Scene(scenePath),
+                amountScale));
     }
 
     public static LovecAura? WithAura<TController>(
         this PowerModel power)
         where TController : PowerAuraController
     {
-        return power.WithAura<TController>(AuraSpec.Default);
+        return power.WithAura<TController>(DefaultAuraSpec.Empty);
     }
 
     public static LovecAura? WithAura<TController>(
@@ -50,7 +48,8 @@ public static class AuraPowerExtensions
         where TController : PowerAuraController
     {
         return power.WithAura<TController>(
-            AuraSpec.FromColor(color, amountScale));
+            DefaultAuraSpec.WithColor(color),
+            amountScale);
     }
 
     public static LovecAura? WithAura<TController>(
@@ -60,45 +59,52 @@ public static class AuraPowerExtensions
         where TController : PowerAuraController
     {
         return power.WithAura<TController>(
-            AuraSpec.FromScene(scenePath, amountScale));
+            AuraSpec.Scene(scenePath),
+            amountScale);
     }
 
     public static LovecAura? WithAura<TController>(
         this PowerModel power,
-        AuraSpec spec)
+        AuraSpec spec,
+        float amountScale = 0.05f)
         where TController : PowerAuraController
     {
-        TController controller = CreateController<TController>(power, spec);
+        TController controller = CreateController<TController>(
+            power,
+            spec,
+            amountScale);
+
         return AuraCmd.Apply(controller);
     }
 
     private static TController CreateController<TController>(
         PowerModel power,
-        AuraSpec spec)
+        AuraSpec spec,
+        float amountScale)
         where TController : PowerAuraController
     {
         Type controllerType = typeof(TController);
         Type powerType = power.GetType();
 
         object? controller =
-            TryCreate(controllerType, new[] { powerType, typeof(AuraSpec) }, new object[] { power, spec })
-            ?? TryCreate(controllerType, new[] { typeof(PowerModel), typeof(AuraSpec) }, new object[] { power, spec })
-            ?? TryCreate(controllerType, new[] { powerType }, new object[] { power })
-            ?? TryCreate(controllerType, new[] { typeof(PowerModel) }, new object[] { power });
+            TryCreate(controllerType, [powerType, typeof(AuraSpec), typeof(float)], [power, spec, amountScale])
+            ?? TryCreate(controllerType, [typeof(PowerModel), typeof(AuraSpec), typeof(float)], [power, spec, amountScale])
+            ?? TryCreate(controllerType, [powerType, typeof(AuraSpec)], [power, spec])
+            ?? TryCreate(controllerType, [typeof(PowerModel), typeof(AuraSpec)], [power, spec])
+            ?? TryCreate(controllerType, [powerType], [power])
+            ?? TryCreate(controllerType, [typeof(PowerModel)], [power]);
 
         if (controller is TController typed)
             return typed;
 
         throw new InvalidOperationException(
-            $"Could not create aura controller {controllerType.Name}. " +
-            $"Expected constructor ({powerType.Name}, AuraSpec), " +
-            $"(PowerModel, AuraSpec), ({powerType.Name}), or (PowerModel).");
+            $"Could not create aura controller {controllerType.Name}.");
     }
 
     private static object? TryCreate(
         Type type,
         Type[] parameterTypes,
-        object[] args)
+        object?[] args)
     {
         ConstructorInfo? ctor = type.GetConstructor(parameterTypes);
         return ctor?.Invoke(args);

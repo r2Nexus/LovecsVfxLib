@@ -1,12 +1,16 @@
 using Godot;
-using LovecsVfxLibCode.Vfx.Auras;
 
-namespace LovecsVfxLibCode.Auras;
+namespace LovecsVfxLibCode.Vfx.Auras;
 
 public partial class DefaultLovecAura : LovecAura
 {
     private GpuParticles2D? _iconParticles;
     private GpuParticles2D? _colorParticles;
+
+    private float _baseIconAmountRatio;
+    private float _baseColorAmountRatio;
+    private float _baseIconSpeedScale;
+    private float _baseColorSpeedScale;
 
     protected override void InitializeOnce()
     {
@@ -21,6 +25,20 @@ public partial class DefaultLovecAura : LovecAura
         if (_colorParticles == null)
             GD.PushWarning($"{nameof(DefaultLovecAura)} is missing ColorParticles.");
 
+        if (_iconParticles != null)
+        {
+            _baseIconAmountRatio = (float)_iconParticles.AmountRatio;
+            _baseIconSpeedScale = (float)_iconParticles.SpeedScale;
+            LocalizeMaterial(_iconParticles);
+        }
+
+        if (_colorParticles != null)
+        {
+            _baseColorAmountRatio = (float)_colorParticles.AmountRatio;
+            _baseColorSpeedScale = (float)_colorParticles.SpeedScale;
+            LocalizeMaterial(_colorParticles);
+        }
+
         ResetParticles();
     }
 
@@ -28,8 +46,44 @@ public partial class DefaultLovecAura : LovecAura
     {
         Modulate = Colors.White;
 
-        ApplyIconParticles(spec.Icon);
-        ApplyColorParticles(spec.Color);
+        if (spec is not DefaultAuraSpec defaultSpec)
+        {
+            ApplyIconParticles(null);
+            ApplyColorParticles(null);
+            return;
+        }
+
+        ApplyIconParticles(defaultSpec.Icon);
+        ApplyColorParticles(defaultSpec.Color);
+    }
+
+    protected override void ApplyIntensity(float intensity)
+    {
+        if (_iconParticles != null)
+        {
+            _iconParticles.AmountRatio = Mathf.Clamp(
+                _baseIconAmountRatio + intensity,
+                0f,
+                0.7f);
+
+            _iconParticles.SpeedScale = Mathf.Clamp(
+                _baseIconSpeedScale * (1f + intensity),
+                0.75f,
+                1.5f);
+        }
+
+        if (_colorParticles != null)
+        {
+            _colorParticles.AmountRatio = Mathf.Clamp(
+                _baseColorAmountRatio + intensity,
+                0f,
+                0.7f);
+
+            _colorParticles.SpeedScale = Mathf.Clamp(
+                _baseColorSpeedScale * (1f + intensity),
+                0.75f,
+                1.5f);
+        }
     }
 
     private void ApplyIconParticles(Texture2D? icon)
@@ -59,22 +113,13 @@ public partial class DefaultLovecAura : LovecAura
 
     private void ResetParticles()
     {
-        if (_iconParticles != null)
-        {
-            _iconParticles.Modulate = Colors.White;
-            _iconParticles.Emitting = false;
+        ApplyIconParticles(null);
+        ApplyColorParticles(null);
+    }
 
-            if (_iconParticles.ProcessMaterial is ParticleProcessMaterial material)
-                material.Color = Colors.White;
-        }
-
-        if (_colorParticles != null)
-        {
-            _colorParticles.Modulate = Colors.White;
-            _colorParticles.Emitting = false;
-
-            if (_colorParticles.ProcessMaterial is ParticleProcessMaterial material)
-                material.Color = Colors.White;
-        }
+    private static void LocalizeMaterial(GpuParticles2D particles)
+    {
+        if (particles.ProcessMaterial is Material material)
+            particles.ProcessMaterial = (Material)material.Duplicate();
     }
 }
