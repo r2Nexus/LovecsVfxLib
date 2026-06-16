@@ -30,6 +30,7 @@ public partial class LovecAura : Node2D
         }
 
         Controller?.DetachFromView();
+
         Controller = controller;
         controller.AttachToView(this);
     }
@@ -39,7 +40,6 @@ public partial class LovecAura : Node2D
         InitializeOnce();
 
         AuraCmd.UpdateAuraPosition(this, controller);
-
         Visible = true;
 
         ApplySpec(controller.Spec);
@@ -54,7 +54,7 @@ public partial class LovecAura : Node2D
     protected virtual void ApplyIntensity(float intensity)
     {
         // Intentionally empty.
-        // Concrete aura scenes decide what intensity means.
+        // Real aura scenes decide how to use intensity.
     }
 
     public virtual void Remove()

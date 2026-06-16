@@ -15,13 +15,9 @@ public abstract class AuraController : IDisposable
 
     public virtual decimal Amount => 1m;
 
-    public virtual float AmountScale { get; } = 0.05f;
-    public virtual float MinIntensity { get; } = 0f;
-    public virtual float MaxIntensity { get; } = 1f;
-
     protected AuraController(AuraSpec? spec = null)
     {
-        Spec = spec ?? new AuraSpec();
+        Spec = spec ?? AuraSpec.Default;
     }
 
     internal void AttachToView(LovecAura view)
@@ -56,18 +52,14 @@ public abstract class AuraController : IDisposable
         View = null;
     }
 
-    protected virtual AuraSpec CompleteSpec(AuraSpec spec)
-        => spec;
+    protected virtual AuraSpec CompleteSpec(AuraSpec spec) => spec;
 
     protected virtual void OnAttached() {}
     protected virtual void OnDetached() {}
 
     public virtual float GetIntensity()
     {
-        return Mathf.Clamp(
-            (float)Amount * AmountScale,
-            MinIntensity,
-            MaxIntensity);
+        return Mathf.Max(0f, (float)Amount * Spec.AmountScale);
     }
 
     public virtual bool ShouldRemove()

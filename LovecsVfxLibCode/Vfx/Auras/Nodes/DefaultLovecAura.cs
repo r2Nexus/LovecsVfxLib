@@ -7,10 +7,8 @@ public partial class DefaultLovecAura : LovecAura
     private GpuParticles2D? _iconParticles;
     private GpuParticles2D? _colorParticles;
 
-    private float _baseIconAmountRatio;
-    private float _baseColorAmountRatio;
-    private float _baseIconSpeedScale;
-    private float _baseColorSpeedScale;
+    private float _baseIconRatio;
+    private float _baseColorRatio;
 
     protected override void InitializeOnce()
     {
@@ -27,15 +25,13 @@ public partial class DefaultLovecAura : LovecAura
 
         if (_iconParticles != null)
         {
-            _baseIconAmountRatio = (float)_iconParticles.AmountRatio;
-            _baseIconSpeedScale = (float)_iconParticles.SpeedScale;
+            _baseIconRatio = (float)_iconParticles.AmountRatio;
             LocalizeMaterial(_iconParticles);
         }
 
         if (_colorParticles != null)
         {
-            _baseColorAmountRatio = (float)_colorParticles.AmountRatio;
-            _baseColorSpeedScale = (float)_colorParticles.SpeedScale;
+            _baseColorRatio = (float)_colorParticles.AmountRatio;
             LocalizeMaterial(_colorParticles);
         }
 
@@ -46,15 +42,21 @@ public partial class DefaultLovecAura : LovecAura
     {
         Modulate = Colors.White;
 
-        if (spec is not DefaultAuraSpec defaultSpec)
+        if (_iconParticles != null)
         {
-            ApplyIconParticles(null);
-            ApplyColorParticles(null);
-            return;
+            _iconParticles.Texture = spec.Icon;
+            _iconParticles.Modulate = Colors.White;
+            _iconParticles.Emitting = spec.Icon != null;
         }
 
-        ApplyIconParticles(defaultSpec.Icon);
-        ApplyColorParticles(defaultSpec.Color);
+        if (_colorParticles != null)
+        {
+            _colorParticles.Modulate = Colors.White;
+            _colorParticles.Emitting = spec.Color.HasValue;
+
+            if (_colorParticles.ProcessMaterial is ParticleProcessMaterial mat)
+                mat.Color = spec.Color ?? Colors.White;
+        }
     }
 
     protected override void ApplyIntensity(float intensity)
@@ -62,59 +64,27 @@ public partial class DefaultLovecAura : LovecAura
         if (_iconParticles != null)
         {
             _iconParticles.AmountRatio = Mathf.Clamp(
-                _baseIconAmountRatio + intensity,
+                _baseIconRatio + intensity,
                 0f,
-                0.7f);
-
-            _iconParticles.SpeedScale = Mathf.Clamp(
-                _baseIconSpeedScale * (1f + intensity),
-                0.75f,
-                1.5f);
+                0.6f);
         }
 
         if (_colorParticles != null)
         {
             _colorParticles.AmountRatio = Mathf.Clamp(
-                _baseColorAmountRatio + intensity,
+                _baseColorRatio + intensity,
                 0f,
                 0.7f);
-
-            _colorParticles.SpeedScale = Mathf.Clamp(
-                _baseColorSpeedScale * (1f + intensity),
-                0.75f,
-                1.5f);
         }
-    }
-
-    private void ApplyIconParticles(Texture2D? icon)
-    {
-        if (_iconParticles == null)
-            return;
-
-        _iconParticles.Modulate = Colors.White;
-        _iconParticles.Texture = icon;
-        _iconParticles.Emitting = icon != null;
-
-        if (_iconParticles.ProcessMaterial is ParticleProcessMaterial material)
-            material.Color = Colors.White;
-    }
-
-    private void ApplyColorParticles(Color? color)
-    {
-        if (_colorParticles == null)
-            return;
-
-        _colorParticles.Modulate = Colors.White;
-        _colorParticles.Emitting = color.HasValue;
-
-        if (_colorParticles.ProcessMaterial is ParticleProcessMaterial material)
-            material.Color = color ?? Colors.White;
     }
 
     private void ResetParticles()
     {
-        ApplyIconParticles(null);
-        ApplyColorParticles(null);
+        if (_iconParticles != null)
+            _iconParticles.Emitting = false;
+
+        if (_colorParticles != null)
+            _colorParticles.Emitting = false;
     }
 
     private static void LocalizeMaterial(GpuParticles2D particles)

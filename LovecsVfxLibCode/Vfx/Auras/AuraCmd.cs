@@ -1,5 +1,4 @@
 using Godot;
-using LovecsVfxLibCode.Auras;
 using MegaCrit.Sts2.Core.Assets;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Helpers;
@@ -14,7 +13,9 @@ public static class AuraCmd
     public static string DefaultAuraScenePath { get; set; } =
         "res://LovecsVfxLib/scenes/vfx/auras/DefaultLovecAura.tscn";
 
-    public static LovecAura? Apply(AuraController controller)
+    public static LovecAura? Apply(
+        AuraController controller,
+        string? scenePath = null)
     {
         if (TestMode.IsOn)
             return null;
@@ -32,7 +33,7 @@ public static class AuraCmd
         Node anchor = GetOrCreateAnchor(container);
 
         string auraKey = controller.Spec.AuraKey
-            ?? AuraKeys.ForController(controller);
+                         ?? AuraKeys.ForController(controller, scenePath);
 
         if (anchor.GetNodeOrNull<LovecAura>(auraKey) is { } existing)
         {
@@ -40,7 +41,7 @@ public static class AuraCmd
             return existing;
         }
 
-        LovecAura? aura = InstantiateAura(controller.Spec);
+        LovecAura? aura = InstantiateAura(scenePath);
 
         if (aura == null)
             return null;
@@ -50,6 +51,28 @@ public static class AuraCmd
         aura.Bind(controller);
 
         return aura;
+    }
+
+    private static LovecAura? InstantiateAura(string? scenePath)
+    {
+        string path = scenePath ?? DefaultAuraScenePath;
+        string resolvedPath = ResolveScenePath(path);
+
+        if (!ResourceLoader.Exists(resolvedPath))
+        {
+            GD.PushWarning($"[AuraCmd] Aura scene not found: {path} resolved to {resolvedPath}.");
+            return null;
+        }
+
+        PackedScene scene = PreloadManager.Cache.GetScene(resolvedPath);
+        Node node = scene.Instantiate();
+
+        if (node is LovecAura aura)
+            return aura;
+
+        GD.PushWarning($"[AuraCmd] Aura scene root must inherit LovecAura: {resolvedPath}");
+        node.QueueFree();
+        return null;
     }
     
     public static void UpdateAuraPosition(LovecAura aura, AuraController controller)
@@ -93,32 +116,6 @@ public static class AuraCmd
 
         container.AddChildSafely(anchor);
         return anchor;
-    }
-
-    private static LovecAura? InstantiateAura(AuraSpec spec)
-    {
-        string path = spec.ScenePath ?? DefaultAuraScenePath;
-        string resolvedPath = ResolveScenePath(path);
-
-        if (!ResourceLoader.Exists(resolvedPath))
-        {
-            GD.PushWarning(
-                $"[AuraCmd] Aura scene not found: {path} resolved to {resolvedPath}.");
-
-            return null;
-        }
-
-        PackedScene scene = PreloadManager.Cache.GetScene(resolvedPath);
-        Node node = scene.Instantiate();
-
-        if (node is LovecAura aura)
-            return aura;
-
-        GD.PushWarning(
-            $"[AuraCmd] Aura scene root must inherit LovecAura: {resolvedPath}");
-
-        node.QueueFree();
-        return null;
     }
 
     private static string ResolveScenePath(string path)
