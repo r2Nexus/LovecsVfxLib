@@ -56,7 +56,30 @@ public static class AuraCmd
 
     private static LovecAura? InstantiateAura(string? scenePath)
     {
-        return new DefaultLovecAura();
+        string path = scenePath ?? DefaultAuraScenePath;
+        string resolvedPath = ResolveScenePath(path);
+
+        PackedScene? scene = GD.Load<PackedScene>(resolvedPath);
+
+        if (scene == null)
+        {
+            GD.PushWarning(
+                $"[AuraCmd] Aura scene failed to load: {path} resolved to {resolvedPath}.");
+
+            return null;
+        }
+
+        Node node = scene.Instantiate();
+
+        if (node is LovecAura aura)
+            return aura;
+
+        GD.PushWarning(
+            $"[AuraCmd] Aura scene root must inherit LovecAura: {resolvedPath}. " +
+            $"Actual root type: {node.GetType().FullName}");
+
+        node.QueueFree();
+        return null;
     }
     
     public static void UpdateAuraPosition(LovecAura aura, AuraController controller)

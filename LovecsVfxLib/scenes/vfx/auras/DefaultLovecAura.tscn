@@ -73,7 +73,7 @@ script = ExtResource("1_wrkgd")
 amount = 12
 amount_ratio = 0.2
 texture = SubResource("PlaceholderTexture2D_ffle5")
-lifetime = 1.5999999999999999
+lifetime = 1.6
 process_material = SubResource("ParticleProcessMaterial_m3c60")
 
 [node name="ColorParticles" type="GPUParticles2D" parent="."]

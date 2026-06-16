@@ -21,7 +21,6 @@ public sealed class PowerAuraController : AuraController
     {
         return spec with
         {
-            Icon = spec.Icon ?? Power.Icon,
             AuraKey = spec.AuraKey ?? AuraKeys.ForPower(Power)
         };
     }
