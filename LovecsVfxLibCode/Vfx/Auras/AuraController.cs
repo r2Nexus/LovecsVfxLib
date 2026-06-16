@@ -6,6 +6,8 @@ namespace LovecsVfxLibCode.Vfx.Auras;
 public abstract class AuraController : IDisposable
 {
     private bool _isAttached;
+    private bool _isSyncing;
+    private bool _isRemoving;
 
     public abstract Creature Target { get; }
 
@@ -19,6 +21,10 @@ public abstract class AuraController : IDisposable
     {
         Spec = spec ?? AuraSpec.Default;
     }
+    internal void Prepare()
+    {
+        Spec = CompleteSpec(Spec);
+    }
 
     internal void AttachToView(LovecAura view)
     {
@@ -31,7 +37,7 @@ public abstract class AuraController : IDisposable
         DetachFromView();
 
         View = view;
-        Spec = CompleteSpec(Spec);
+        Prepare();
 
         _isAttached = true;
         OnAttached();
@@ -69,23 +75,47 @@ public abstract class AuraController : IDisposable
 
     public virtual void Sync()
     {
-        if (ShouldRemove())
-        {
-            Remove();
+        if (_isSyncing)
             return;
-        }
 
-        View?.SyncFromController(this);
+        try
+        {
+            _isSyncing = true;
+
+            if (ShouldRemove())
+            {
+                Remove();
+                return;
+            }
+
+            View?.SyncFromController(this);
+        }
+        finally
+        {
+            _isSyncing = false;
+        }
     }
 
     public virtual void Remove()
     {
-        LovecAura? view = View;
+        if (_isRemoving)
+            return;
 
-        DetachFromView();
+        try
+        {
+            _isRemoving = true;
 
-        if (view != null && GodotObject.IsInstanceValid(view) && !view.IsQueuedForDeletion())
-            view.QueueFree();
+            LovecAura? view = View;
+
+            DetachFromView();
+
+            if (view != null && GodotObject.IsInstanceValid(view) && !view.IsQueuedForDeletion())
+                view.QueueFree();
+        }
+        finally
+        {
+            _isRemoving = false;
+        }
     }
 
     public virtual void Dispose()

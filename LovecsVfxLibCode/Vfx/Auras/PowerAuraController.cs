@@ -1,3 +1,4 @@
+using Godot;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Models;
 
@@ -21,7 +22,6 @@ public sealed class PowerAuraController : AuraController
     {
         return spec with
         {
-            Icon = spec.Icon ?? Power.Icon,
             AuraKey = spec.AuraKey ?? AuraKeys.ForPower(Power)
         };
     }
