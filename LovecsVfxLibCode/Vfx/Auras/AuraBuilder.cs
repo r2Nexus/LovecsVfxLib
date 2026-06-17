@@ -64,6 +64,32 @@ public sealed class AuraBuilder
         _controller.Sync();
         return this;
     }
+    
+    public AuraBuilder SetPowerAmountRange(decimal minPowerAmount, decimal maxPowerAmount)
+    {
+        Config.SetPowerAmountRange(minPowerAmount, maxPowerAmount);
+        _controller.Sync();
+        return this;
+    }
+
+    public AuraBuilder SetPowerAmountRange(Func<decimal> minPowerAmountProvider, Func<decimal> maxPowerAmountProvider)
+    {
+        Config.SetPowerAmountRange(minPowerAmountProvider, maxPowerAmountProvider);
+        _controller.Sync();
+        return this;
+    }
+
+    public AuraBuilder LethalAt(decimal lethalAmount)
+        => SetPowerAmountRange(lethalAmount, lethalAmount);
+
+    public AuraBuilder LethalAt(Func<decimal> lethalAmountProvider)
+        => SetPowerAmountRange(lethalAmountProvider, lethalAmountProvider);
+
+    public AuraBuilder AsLethalAura(decimal lethalAmount)
+        => LethalAt(lethalAmount);
+
+    public AuraBuilder AsLethalAura(Func<decimal> lethalAmountProvider)
+        => LethalAt(lethalAmountProvider);
 
     public AuraController Controller => _controller;
 }

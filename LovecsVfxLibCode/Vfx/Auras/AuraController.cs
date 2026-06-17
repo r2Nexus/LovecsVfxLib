@@ -60,7 +60,12 @@ public abstract class AuraController : IDisposable
     public virtual bool IsActive() => Amount > 0m;
 
     public virtual VfxState GetState(double delta = 0d)
-        => new(IsActive(), Amount, delta);
+        => new(
+            IsActive(),
+            Amount,
+            delta,
+            Config.TryGetMinPowerAmount(),
+            Config.TryGetMaxPowerAmount());
 
     public virtual bool ShouldRemove()
         => Target == null || Target.IsDead;

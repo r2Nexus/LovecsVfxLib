@@ -12,12 +12,15 @@ public class AuraConfig
     public string? ScenePath { get; set; }
     public Vector2 Offset { get; set; } = Vector2.Zero;
 
+    private Func<decimal>? _minPowerAmountProvider;
+    private Func<decimal>? _maxPowerAmountProvider;
+
     public Dictionary<string, VfxSlotValue> Slots { get; } = new(StringComparer.OrdinalIgnoreCase);
 
     /// <summary>
     /// Incremented whenever slot/config values change, so aura views can re-apply slots only when needed.
     /// </summary>
-    public int Version { get; private set; }
+    public int Version { get; set; }
 
     public AuraConfig Set(string slotName, VfxSlotValue value)
     {
@@ -39,6 +42,57 @@ public class AuraConfig
         int vFrames,
         bool loop = false)
         => Set(slotName, VfxSlotValue.FromSpriteSheet(texturePath, hFrames, vFrames, loop));
+
+    public AuraConfig SetPowerAmountRange(decimal minPowerAmount, decimal maxPowerAmount)
+        => SetPowerAmountRange(() => minPowerAmount, () => maxPowerAmount);
+
+    public AuraConfig SetPowerAmountRange(Func<decimal> minPowerAmountProvider, Func<decimal> maxPowerAmountProvider)
+    {
+        _minPowerAmountProvider = minPowerAmountProvider;
+        _maxPowerAmountProvider = maxPowerAmountProvider;
+        Version++;
+        return this;
+    }
+
+    public AuraConfig ClearPowerAmountRange()
+    {
+        _minPowerAmountProvider = null;
+        _maxPowerAmountProvider = null;
+        Version++;
+        return this;
+    }
+
+    public decimal? TryGetMinPowerAmount()
+    {
+        if (_minPowerAmountProvider == null)
+            return null;
+
+        try
+        {
+            return _minPowerAmountProvider();
+        }
+        catch (Exception e)
+        {
+            GD.PushWarning($"[AuraConfig] Min power amount provider failed: {e.Message}");
+            return null;
+        }
+    }
+
+    public decimal? TryGetMaxPowerAmount()
+    {
+        if (_maxPowerAmountProvider == null)
+            return null;
+
+        try
+        {
+            return _maxPowerAmountProvider();
+        }
+        catch (Exception e)
+        {
+            GD.PushWarning($"[AuraConfig] Max power amount provider failed: {e.Message}");
+            return null;
+        }
+    }
 }
 
 /// <summary>

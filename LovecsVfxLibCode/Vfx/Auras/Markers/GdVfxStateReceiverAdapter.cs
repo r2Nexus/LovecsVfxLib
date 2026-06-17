@@ -38,7 +38,7 @@ public sealed class GdVfxStateReceiverAdapter : IVfxStateReceiver
             return;
         }
 
-        float ratio = GetPowerRatio(state.Amount);
+        float ratio = GetPowerRatio(state);
         float minSpeed = GetFloat("min_speed_multiplier");
         float maxSpeed = GetFloat("max_speed_multiplier");
 
@@ -57,11 +57,12 @@ public sealed class GdVfxStateReceiverAdapter : IVfxStateReceiver
         return _node.GetParent();
     }
 
-    private float GetPowerRatio(decimal amount)
+    private float GetPowerRatio(VfxState state)
     {
-        float amountValue = (float)amount;
-        float min = GetFloat("min_power_amount");
-        float max = GetFloat("max_power_amount");
+        float amountValue = (float)state.Amount;
+
+        float min = (float)(state.MinPowerAmount ?? (decimal)GetFloat("min_power_amount", 0f));
+        float max = (float)(state.MaxPowerAmount ?? (decimal)GetFloat("max_power_amount", 10f));
 
         if (Mathf.IsEqualApprox(min, max))
             return amountValue >= max ? 1f : 0f;
@@ -70,8 +71,15 @@ public sealed class GdVfxStateReceiverAdapter : IVfxStateReceiver
         return Mathf.Clamp(ratio, 0f, 1f);
     }
 
-    private float GetFloat(string propertyName)
-        => (float)_node.Get(propertyName).AsDouble();
+    private float GetFloat(string propertyName, float fallback = 0f)
+    {
+        Variant value = _node.Get(propertyName);
+
+        if (value.VariantType == Variant.Type.Nil)
+            return fallback;
+
+        return (float)value.AsDouble();
+    }
 
     private NodePath GetNodePath(string propertyName)
     {
