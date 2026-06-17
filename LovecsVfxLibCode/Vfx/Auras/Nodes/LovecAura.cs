@@ -13,12 +13,6 @@ public partial class LovecAura : Node2D
         InitializeOnce();
     }
 
-    public override void _Process(double delta)
-    {
-        if (Controller != null)
-            AuraCmd.UpdateAuraPosition(this, Controller);
-    }
-
     public virtual void Bind(AuraController controller)
     {
         InitializeOnce();
@@ -39,7 +33,7 @@ public partial class LovecAura : Node2D
     {
         InitializeOnce();
 
-        AuraCmd.UpdateAuraPosition(this, controller);
+        Position = controller.Spec.Offset;
         Visible = true;
 
         ApplySpec(controller.Spec);

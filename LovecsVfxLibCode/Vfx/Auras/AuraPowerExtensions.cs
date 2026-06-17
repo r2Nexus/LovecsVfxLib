@@ -7,10 +7,13 @@ public static class AuraPowerExtensions
 {
     public static LovecAura? WithAura(this PowerModel power)
     {
-        return power.WithAura(
+        return ApplyAura(
+            power,
             scenePath: null,
-            color: null,
-            amountScale: 0.05f);
+            spec: new AuraSpec
+            {
+                AmountScale = 0.05f
+            });
     }
 
     public static LovecAura? WithAura(
@@ -18,10 +21,14 @@ public static class AuraPowerExtensions
         Color color,
         float amountScale = 0.05f)
     {
-        return power.WithAura(
+        return ApplyAura(
+            power,
             scenePath: null,
-            color: color,
-            amountScale: amountScale);
+            spec: new AuraSpec
+            {
+                Color = color,
+                AmountScale = amountScale
+            });
     }
 
     public static LovecAura? WithAura(
@@ -29,10 +36,13 @@ public static class AuraPowerExtensions
         string scenePath,
         float amountScale = 0.05f)
     {
-        return power.WithAura(
-            scenePath: scenePath,
-            color: null,
-            amountScale: amountScale);
+        return ApplyAura(
+            power,
+            scenePath,
+            spec: new AuraSpec
+            {
+                AmountScale = amountScale
+            });
     }
 
     public static LovecAura? WithAura(
@@ -41,10 +51,14 @@ public static class AuraPowerExtensions
         Color color,
         float amountScale = 0.05f)
     {
-        return power.WithAura(
-            scenePath: scenePath,
-            color: color,
-            amountScale: amountScale);
+        return ApplyAura(
+            power,
+            scenePath,
+            spec: new AuraSpec
+            {
+                Color = color,
+                AmountScale = amountScale
+            });
     }
 
     public static LovecAura? WithAura(
@@ -53,17 +67,26 @@ public static class AuraPowerExtensions
         Color? color,
         float amountScale = 0.05f)
     {
-        AuraSpec spec = new()
-        {
-            Color = color,
-            AmountScale = amountScale
-        };
-
-        return power.WithAura(scenePath, spec);
+        return ApplyAura(
+            power,
+            scenePath,
+            spec: new AuraSpec
+            {
+                Color = color,
+                AmountScale = amountScale
+            });
     }
 
     public static LovecAura? WithAura(
         this PowerModel power,
+        string? scenePath,
+        AuraSpec spec)
+    {
+        return ApplyAura(power, scenePath, spec);
+    }
+
+    private static LovecAura? ApplyAura(
+        PowerModel power,
         string? scenePath,
         AuraSpec spec)
     {

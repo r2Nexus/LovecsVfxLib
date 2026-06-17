@@ -1,9 +1,10 @@
 using Godot;
-
-namespace LovecsVfxLibCode.Vfx.Auras;
+using LovecsVfxLibCode.Vfx.Auras;
 
 public partial class DefaultLovecAura : LovecAura
 {
+    private bool _defaultInitialized;
+
     private GpuParticles2D? _iconParticles;
     private GpuParticles2D? _colorParticles;
 
@@ -12,6 +13,11 @@ public partial class DefaultLovecAura : LovecAura
 
     protected override void InitializeOnce()
     {
+        if (_defaultInitialized)
+            return;
+
+        _defaultInitialized = true;
+
         base.InitializeOnce();
 
         _iconParticles = GetNodeOrNull<GpuParticles2D>("IconParticles");
