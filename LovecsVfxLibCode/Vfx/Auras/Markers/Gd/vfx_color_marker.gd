@@ -1,5 +1,6 @@
 extends Node
 class_name VfxColorMarker
+#Used for marking node with changable color
 
 enum ColorTarget {
 	MODULATE,

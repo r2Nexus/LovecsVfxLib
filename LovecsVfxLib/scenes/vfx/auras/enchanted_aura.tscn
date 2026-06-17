@@ -1,0 +1,73 @@
+[gd_scene load_steps=14 format=3 uid="uid://cal46kxw58iiu"]
+
+[ext_resource type="Script" uid="uid://cd0gp20jvmsg4" path="res://LovecsVfxLibCode/Vfx/Auras/Nodes/LovecAura.cs" id="1_kkgw3"]
+[ext_resource type="Texture2D" uid="uid://bfbaad1sdbrgn" path="res://LovecsVfxLib/images/vfx/galactic_alphabet.png" id="2_kkgw3"]
+[ext_resource type="Script" uid="uid://c37ngqel2av4k" path="res://LovecsVfxLibCode/Vfx/Auras/Markers/Gd/vfx_color_marker.gd" id="3_ql2pa"]
+[ext_resource type="Script" uid="uid://7hp77ircotc4" path="res://LovecsVfxLibCode/Vfx/Auras/Markers/Gd/vfx_sprite_sheet_marker.gd" id="4_tue6r"]
+[ext_resource type="Script" uid="uid://c3nauwmlbw32l" path="res://LovecsVfxLibCode/Vfx/Auras/Markers/Gd/vfx_particle_power_scaling.gd" id="5_py5wb"]
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_5c670"]
+blend_mode = 1
+particles_animation = true
+particles_anim_h_frames = 25
+particles_anim_v_frames = 1
+particles_anim_loop = true
+
+[sub_resource type="Curve" id="Curve_ql2pa"]
+_data = [Vector2(0, 0.28063244), 0.0, 0.0, 0, 0, Vector2(0.25063938, 0.749506), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_tue6r"]
+curve = SubResource("Curve_ql2pa")
+
+[sub_resource type="Curve" id="Curve_py5wb"]
+_limits = [-200.0, 200.0, 0.0, 1.0]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 22.72728), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_a5ctq"]
+curve = SubResource("Curve_py5wb")
+
+[sub_resource type="Curve" id="Curve_j451y"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.24552429, 0.65887403), 0.0, 0.0, 0, 0, Vector2(0.7493606, 1), 0.0, 0.0, 0, 0, Vector2(1, 0.5224236), 0.0, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="CurveTexture" id="CurveTexture_n0lau"]
+curve = SubResource("Curve_j451y")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_0ti53"]
+particle_flag_disable_z = true
+emission_shape = 2
+emission_sphere_radius = 100.0
+gravity = Vector3(0, -1, 0)
+linear_accel_min = 7.9999976
+linear_accel_max = 9.999997
+linear_accel_curve = SubResource("CurveTexture_a5ctq")
+scale_max = 2.0
+scale_curve = SubResource("CurveTexture_n0lau")
+alpha_curve = SubResource("CurveTexture_tue6r")
+anim_speed_min = 0.19999999
+anim_speed_max = 0.5
+anim_offset_max = 1.0
+
+[node name="EnchantedAura" type="Node2D"]
+script = ExtResource("1_kkgw3")
+
+[node name="GPUParticles2D" type="GPUParticles2D" parent="."]
+material = SubResource("CanvasItemMaterial_5c670")
+amount = 12
+amount_ratio = 0.5
+texture = ExtResource("2_kkgw3")
+lifetime = 2.0
+process_material = SubResource("ParticleProcessMaterial_0ti53")
+
+[node name="TintMarker" type="Node" parent="GPUParticles2D"]
+script = ExtResource("3_ql2pa")
+
+[node name="SpriteSheetMarker" type="Node" parent="GPUParticles2D"]
+script = ExtResource("4_tue6r")
+
+[node name="PowerScalingMarker" type="Node" parent="GPUParticles2D"]
+script = ExtResource("5_py5wb")
+min_speed_multiplier = 0.8
+max_speed_multiplier = 1.5

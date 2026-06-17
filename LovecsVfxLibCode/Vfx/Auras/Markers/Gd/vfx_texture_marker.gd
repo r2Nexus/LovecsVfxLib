@@ -1,6 +1,8 @@
 extends Node
 class_name VfxTextureMarker
 
+#Used for marking node with texture
+
 enum TextureTarget {
 	AUTO,
 	TEXTURE,

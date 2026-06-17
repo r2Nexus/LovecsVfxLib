@@ -4,17 +4,9 @@ namespace LovecsVfxLibCode.Vfx.Auras;
 
 public static class AuraExtensions
 {
-    /// <summary>
-    /// Attach the default marker-based aura scene to this power.
-    /// The power icon is automatically provided to the "icon" slot if available.
-    /// </summary>
-    public static AuraBuilder WithAura(this PowerModel power)
-        => new AuraBuilder(power).UsePowerIcon(VfxSlots.Icon);
+    public static AuraBuilder WithAura(this PowerModel power, string? scenePath = null)
+        => new(power, scenePath, usePowerIcon: true);
 
-    /// <summary>
-    /// Attach a custom marker-based aura scene to this power.
-    /// The power icon is automatically provided to the "icon" slot if available.
-    /// </summary>
-    public static AuraBuilder WithAura(this PowerModel power, string scenePath)
-        => new AuraBuilder(power, scenePath).UsePowerIcon(VfxSlots.Icon);
+    public static AuraBuilder WithAuraNoIcon(this PowerModel power, string scenePath)
+        => new(power, scenePath, usePowerIcon: false);
 }

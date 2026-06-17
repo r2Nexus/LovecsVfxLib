@@ -1,5 +1,6 @@
 extends Node
 class_name VfxParticlePowerScaling
+#Used for marking node as able to scale particle power
 
 @export var target_path: NodePath
 @export var min_power_amount: float = 0.0

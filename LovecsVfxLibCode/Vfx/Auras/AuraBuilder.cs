@@ -3,28 +3,43 @@ using MegaCrit.Sts2.Core.Models;
 
 namespace LovecsVfxLibCode.Vfx.Auras;
 
-/// <summary>
-/// Fluent entry point for marker-based power auras.
-/// The aura is applied immediately, and later Set(...) calls sync the already-spawned view.
-/// </summary>
 public sealed class AuraBuilder
 {
     private readonly PowerAuraController _controller;
+    private bool _syncSuspended;
 
     public AuraConfig Config => _controller.Config;
+    public AuraController Controller => _controller;
 
-    internal AuraBuilder(PowerModel power, string? scenePath = null)
+    internal AuraBuilder(PowerModel power, string? scenePath = null, bool usePowerIcon = true)
     {
         var config = new AuraConfig { ScenePath = scenePath };
 
         _controller = new PowerAuraController(power, config);
         AuraCmd.Apply(_controller, scenePath);
+
+        if (usePowerIcon)
+            UsePowerIcon();
+    }
+
+    internal AuraBuilder(PowerAuraController controller, string? scenePath = null)
+    {
+        _controller = controller;
+        AuraCmd.Apply(_controller, scenePath ?? controller.Config.ScenePath);
+    }
+
+    public static AuraBuilder CreateNoIcon(PowerModel power, string scenePath)
+    {
+        var config = new AuraConfig { ScenePath = scenePath };
+        var controller = new PowerAuraController(power, config);
+
+        return new AuraBuilder(controller, scenePath);
     }
 
     public AuraBuilder Set(string slotName, VfxSlotValue value)
     {
         Config.Set(slotName, value);
-        _controller.Sync();
+        SyncIfNeeded();
         return this;
     }
 
@@ -36,7 +51,7 @@ public sealed class AuraBuilder
         bool loop = false)
     {
         Config.SetSpriteSheet(slotName, texturePath, hFrames, vFrames, loop);
-        _controller.Sync();
+        SyncIfNeeded();
         return this;
     }
 
@@ -54,28 +69,45 @@ public sealed class AuraBuilder
     public AuraBuilder Offset(Vector2 offset)
     {
         Config.Offset = offset;
-        _controller.Sync();
+        SyncIfNeeded();
         return this;
     }
 
     public AuraBuilder WithKey(string auraKey)
     {
         Config.AuraKey = auraKey;
-        _controller.Sync();
+        SyncIfNeeded();
         return this;
     }
-    
+
     public AuraBuilder SetPowerAmountRange(decimal minPowerAmount, decimal maxPowerAmount)
     {
         Config.SetPowerAmountRange(minPowerAmount, maxPowerAmount);
-        _controller.Sync();
+        SyncIfNeeded();
         return this;
     }
 
     public AuraBuilder SetPowerAmountRange(Func<decimal> minPowerAmountProvider, Func<decimal> maxPowerAmountProvider)
     {
         Config.SetPowerAmountRange(minPowerAmountProvider, maxPowerAmountProvider);
-        _controller.Sync();
+        SyncIfNeeded();
+        return this;
+    }
+
+    public AuraBuilder Configure(Action<AuraBuilder> configure)
+    {
+        _syncSuspended = true;
+
+        try
+        {
+            configure(this);
+        }
+        finally
+        {
+            _syncSuspended = false;
+            _controller.Sync();
+        }
+
         return this;
     }
 
@@ -91,5 +123,9 @@ public sealed class AuraBuilder
     public AuraBuilder AsLethalAura(Func<decimal> lethalAmountProvider)
         => LethalAt(lethalAmountProvider);
 
-    public AuraController Controller => _controller;
+    private void SyncIfNeeded()
+    {
+        if (!_syncSuspended)
+            _controller.Sync();
+    }
 }

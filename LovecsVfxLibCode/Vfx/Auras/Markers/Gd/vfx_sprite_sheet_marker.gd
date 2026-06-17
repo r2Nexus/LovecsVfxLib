@@ -1,7 +1,8 @@
 extends Node
 class_name VfxSpriteSheetMarker
 
-# Presence marker used by the C# adapter to identify this marker kind.
+#Used for marking node with sprite sheet texture
+
 @export var sprite_sheet_marker: bool = true
 
 @export var slot_name: String = "sheet"
