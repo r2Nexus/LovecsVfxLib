@@ -5,12 +5,25 @@ namespace LovecsVfxLibCode.Vfx.Auras;
 public partial class LovecAura : Node2D
 {
     private bool _initialized;
+    private int _appliedConfigVersion = -1;
+
+    private readonly List<IVfxMarker> _markers = new();
+    private readonly List<IVfxStateReceiver> _stateReceivers = new();
 
     public AuraController? Controller { get; private set; }
 
     public override void _Ready()
     {
         InitializeOnce();
+    }
+
+    public override void _Process(double delta)
+    {
+        if (Controller == null)
+            return;
+
+        AuraCmd.UpdateAuraPosition(this, Controller);
+        ApplyState(Controller.GetState(delta));
     }
 
     public virtual void Bind(AuraController controller)
@@ -24,7 +37,6 @@ public partial class LovecAura : Node2D
         }
 
         Controller?.DetachFromView();
-
         Controller = controller;
         controller.AttachToView(this);
     }
@@ -32,30 +44,31 @@ public partial class LovecAura : Node2D
     public virtual void SyncFromController(AuraController controller)
     {
         InitializeOnce();
-
-        Position = controller.Spec.Offset;
+        AuraCmd.UpdateAuraPosition(this, controller);
         Visible = true;
-
-        ApplySpec(controller.Spec);
-        ApplyIntensity(controller.GetIntensity());
+        ApplyConfig(controller.Config);
+        ApplyState(controller.GetState());
     }
 
-    protected virtual void ApplySpec(AuraSpec spec)
+    protected virtual void ApplyConfig(AuraConfig config)
     {
+        if (_appliedConfigVersion == config.Version)
+            return;
+
         Modulate = Colors.White;
+        VfxMarkerUtil.ApplySlots(_markers, config.Slots);
+        _appliedConfigVersion = config.Version;
     }
 
-    protected virtual void ApplyIntensity(float intensity)
+    protected virtual void ApplyState(VfxState state)
     {
-        // Intentionally empty.
-        // Real aura scenes decide how to use intensity.
+        VfxMarkerUtil.ApplyState(_stateReceivers, state);
     }
 
     public virtual void Remove()
     {
         AuraController? controller = Controller;
         Controller = null;
-
         controller?.DetachFromView();
 
         if (IsInsideTree() && !IsQueuedForDeletion())
@@ -66,7 +79,6 @@ public partial class LovecAura : Node2D
     {
         AuraController? controller = Controller;
         Controller = null;
-
         controller?.DetachFromView();
     }
 
@@ -76,5 +88,9 @@ public partial class LovecAura : Node2D
             return;
 
         _initialized = true;
+        _markers.Clear();
+        _stateReceivers.Clear();
+
+        VfxMarkerScanner.Scan(this, _markers, _stateReceivers);
     }
 }

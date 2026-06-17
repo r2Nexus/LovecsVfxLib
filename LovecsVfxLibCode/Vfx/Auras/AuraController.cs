@@ -6,35 +6,36 @@ namespace LovecsVfxLibCode.Vfx.Auras;
 public abstract class AuraController : IDisposable
 {
     private bool _isAttached;
-    private bool _isDisposed;
+    private bool _isSyncing;
+    private bool _isRemoving;
 
     public abstract Creature Target { get; }
-
+    public AuraConfig Config { get; }
     public LovecAura? View { get; private set; }
-
     public virtual decimal Amount => 1m;
 
-    public virtual AuraSpec Spec => AuraSpec.Default;
+    protected AuraController(AuraConfig? config = null)
+    {
+        Config = config ?? new AuraConfig();
+    }
 
-    public bool IsDisposed => _isDisposed;
+    internal void Prepare()
+    {
+        CompleteConfig(Config);
+    }
 
     internal void AttachToView(LovecAura view)
     {
-        if (_isDisposed)
-            return;
-
         if (ReferenceEquals(View, view) && _isAttached)
         {
             Sync();
             return;
         }
 
-        if (View != null)
-            DetachFromView();
-
+        DetachFromView();
         View = view;
+        Prepare();
         _isAttached = true;
-
         OnAttached();
         Sync();
     }
@@ -42,54 +43,73 @@ public abstract class AuraController : IDisposable
     internal void DetachFromView()
     {
         if (!_isAttached)
+        {
+            View = null;
             return;
+        }
 
         _isAttached = false;
         OnDetached();
         View = null;
     }
 
+    protected virtual void CompleteConfig(AuraConfig config) {}
     protected virtual void OnAttached() {}
     protected virtual void OnDetached() {}
 
-    public virtual float GetIntensity()
-    {
-        return Mathf.Max(0f, (float)Amount * Spec.AmountScale);
-    }
+    public virtual bool IsActive() => Amount > 0m;
+
+    public virtual VfxState GetState(double delta = 0d)
+        => new(IsActive(), Amount, delta);
 
     public virtual bool ShouldRemove()
-    {
-        Creature target = Target;
-        return target == null || target.IsDead;
-    }
+        => Target == null || Target.IsDead;
 
     public virtual void Sync()
     {
-        if (_isDisposed || View == null)
+        if (_isSyncing)
             return;
 
-        if (ShouldRemove())
+        try
         {
-            Remove();
-            return;
-        }
+            _isSyncing = true;
 
-        View.SyncFromController(this);
+            if (ShouldRemove())
+            {
+                Remove();
+                return;
+            }
+
+            View?.SyncFromController(this);
+        }
+        finally
+        {
+            _isSyncing = false;
+        }
     }
 
     public virtual void Remove()
     {
-        View?.Remove();
-        Dispose();
+        if (_isRemoving)
+            return;
+
+        try
+        {
+            _isRemoving = true;
+            LovecAura? view = View;
+            DetachFromView();
+
+            if (view != null && GodotObject.IsInstanceValid(view) && !view.IsQueuedForDeletion())
+                view.QueueFree();
+        }
+        finally
+        {
+            _isRemoving = false;
+        }
     }
 
     public virtual void Dispose()
     {
-        if (_isDisposed)
-            return;
-
-        _isDisposed = true;
-        DetachFromView();
-        GC.SuppressFinalize(this);
+        Remove();
     }
 }

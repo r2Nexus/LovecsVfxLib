@@ -1,4 +1,3 @@
-using Godot;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Models;
 
@@ -6,64 +5,39 @@ namespace LovecsVfxLibCode.Vfx.Auras;
 
 public sealed class PowerAuraController : AuraController
 {
-    private readonly AuraSpec _baseSpec;
-    private AuraSpec? _completedSpec;
-    private bool _subscribed;
-
     public PowerModel Power { get; }
 
-    public PowerAuraController(PowerModel power, AuraSpec? spec = null)
-    {
-        Power = power ?? throw new ArgumentNullException(nameof(power));
-        _baseSpec = spec ?? AuraSpec.Default;
-    }
-
     public override Creature Target => Power.Owner;
-
     public override decimal Amount => Power.DisplayAmount;
 
-    public override AuraSpec Spec => _completedSpec ??= CompleteSpec(_baseSpec);
-
-    private AuraSpec CompleteSpec(AuraSpec spec)
+    public PowerAuraController(PowerModel power, AuraConfig? config = null) : base(config)
     {
-        Texture2D? icon = spec.Icon;
+        Power = power;
+    }
 
-        if (icon == null)
+    protected override void CompleteConfig(AuraConfig config)
+    {
+        config.AuraKey ??= AuraKeys.ForPower(Power);
+
+        // Default power aura convention: if the scene has an "icon" marker,
+        // use the power icon unless the caller already provided a custom icon.
+        if (!config.Slots.ContainsKey(VfxSlots.Icon))
         {
-            try
-            {
-                icon = Power.Icon;
-            }
-            catch (Exception ex)
-            {
-                GD.PushWarning($"[Aura] Failed to get power icon for {Power.GetType().Name}: {ex.Message}");
-            }
+            var icon = AuraPowerUtil.TryGetPowerIcon(Power);
+            if (icon != null)
+                config.Set(VfxSlots.Icon, icon);
         }
-
-        return spec with
-        {
-            Icon = icon,
-            AuraKey = spec.AuraKey ?? AuraKeys.ForPower(Power)
-        };
     }
 
     protected override void OnAttached()
     {
-        if (_subscribed)
-            return;
-
         Power.DisplayAmountChanged += Sync;
         Power.Removed += Remove;
-        _subscribed = true;
     }
 
     protected override void OnDetached()
     {
-        if (!_subscribed)
-            return;
-
         Power.DisplayAmountChanged -= Sync;
         Power.Removed -= Remove;
-        _subscribed = false;
     }
 }
