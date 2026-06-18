@@ -11,7 +11,10 @@ public sealed class AuraBuilder
     public AuraConfig Config => _controller.Config;
     public AuraController Controller => _controller;
 
-    internal AuraBuilder(PowerModel power, string? scenePath = null, bool usePowerIcon = true)
+    internal AuraBuilder(
+        PowerModel power,
+        string? scenePath = null,
+        bool usePowerIcon = false)
     {
         var config = new AuraConfig { ScenePath = scenePath };
 
@@ -26,14 +29,6 @@ public sealed class AuraBuilder
     {
         _controller = controller;
         AuraCmd.Apply(_controller, scenePath ?? controller.Config.ScenePath);
-    }
-
-    public static AuraBuilder CreateNoIcon(PowerModel power, string scenePath)
-    {
-        var config = new AuraConfig { ScenePath = scenePath };
-        var controller = new PowerAuraController(power, config);
-
-        return new AuraBuilder(controller, scenePath);
     }
 
     public AuraBuilder Set(string slotName, VfxSlotValue value)
@@ -58,6 +53,7 @@ public sealed class AuraBuilder
     public AuraBuilder UsePowerIcon(string slotName = VfxSlots.Icon)
     {
         Texture2D? icon = AuraPowerUtil.TryGetPowerIcon(_controller.Power);
+
         if (icon != null)
             Set(slotName, icon);
         else
@@ -87,7 +83,9 @@ public sealed class AuraBuilder
         return this;
     }
 
-    public AuraBuilder SetPowerAmountRange(Func<decimal> minPowerAmountProvider, Func<decimal> maxPowerAmountProvider)
+    public AuraBuilder SetPowerAmountRange(
+        Func<decimal> minPowerAmountProvider,
+        Func<decimal> maxPowerAmountProvider)
     {
         Config.SetPowerAmountRange(minPowerAmountProvider, maxPowerAmountProvider);
         SyncIfNeeded();

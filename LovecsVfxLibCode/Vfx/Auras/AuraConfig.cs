@@ -94,37 +94,3 @@ public class AuraConfig
         }
     }
 }
-
-/// <summary>
-/// Backwards-compatible shim for old call sites. New code should use AuraConfig/AuraBuilder.
-/// </summary>
-[Obsolete("Use AuraConfig / WithAura(...).Set(...) instead. AuraSpec is kept only as a compatibility shim.")]
-public sealed class AuraSpec : AuraConfig
-{
-    public Texture2D? Icon
-    {
-        get => Slots.TryGetValue(VfxSlots.Icon, out var value) ? value.TryAsTexture() : null;
-        init
-        {
-            if (value != null)
-                Set(VfxSlots.Icon, value);
-        }
-    }
-
-    public Color? Color
-    {
-        get => Slots.TryGetValue(VfxSlots.Tint, out var value) ? value.TryAsColor() : null;
-        init
-        {
-            if (value.HasValue)
-                Set(VfxSlots.Tint, value.Value);
-        }
-    }
-
-    public float AmountScale { get; init; } = 0.05f;
-
-    public static AuraSpec Default => new();
-
-    public static AuraSpec WithColor(Color color, float amountScale = 0.05f)
-        => new() { Color = color, AmountScale = amountScale };
-}

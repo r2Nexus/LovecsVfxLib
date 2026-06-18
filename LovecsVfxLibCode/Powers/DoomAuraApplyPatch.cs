@@ -56,7 +56,7 @@ public static class DoomAuraApplyPatch
         if (!Applied.Add(doom))
             return;
 
-        doom.WithAuraNoIcon(DoomAuraScene)
+        doom.WithAura(DoomAuraScene)
             .WithKey(DoomAuraKey)
             .Configure(aura =>
             {

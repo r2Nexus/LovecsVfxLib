@@ -18,15 +18,6 @@ public sealed class PowerAuraController : AuraController
     protected override void CompleteConfig(AuraConfig config)
     {
         config.AuraKey ??= AuraKeys.ForPower(Power);
-
-        // Default power aura convention: if the scene has an "icon" marker,
-        // use the power icon unless the caller already provided a custom icon.
-        if (!config.Slots.ContainsKey(VfxSlots.Icon))
-        {
-            var icon = AuraPowerUtil.TryGetPowerIcon(Power);
-            if (icon != null)
-                config.Set(VfxSlots.Icon, icon);
-        }
     }
 
     protected override void OnAttached()
