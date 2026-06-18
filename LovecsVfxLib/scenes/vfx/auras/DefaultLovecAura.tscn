@@ -1,9 +1,10 @@
-[gd_scene load_steps=16 format=3 uid="uid://cusg4uiefdto4"]
+[gd_scene load_steps=17 format=3 uid="uid://cusg4uiefdto4"]
 
 [ext_resource type="Script" uid="uid://mb7hci8fjorh" path="res://LovecsVfxLibCode/Vfx/Auras/Nodes/DefaultLovecAura.cs" id="1_wrkgd"]
 [ext_resource type="Script" uid="uid://cknmea1wefwh1" path="res://LovecsVfxLibCode/Vfx/Auras/Markers/Gd/vfx_texture_marker.gd" id="2_7qe5q"]
 [ext_resource type="Texture2D" uid="uid://0cx50flkri5y" path="res://LovecsVfxLib/images/vfx/fragments.png" id="2_8py74"]
 [ext_resource type="Script" uid="uid://c3nauwmlbw32l" path="res://LovecsVfxLibCode/Vfx/Auras/Markers/Gd/vfx_particle_power_scaling.gd" id="3_55t71"]
+[ext_resource type="Script" uid="uid://7hp77ircotc4" path="res://LovecsVfxLibCode/Vfx/Auras/Markers/Gd/vfx_sprite_sheet_marker.gd" id="5_55t71"]
 [ext_resource type="Script" uid="uid://c37ngqel2av4k" path="res://LovecsVfxLibCode/Vfx/Auras/Markers/Gd/vfx_color_marker.gd" id="5_m3c60"]
 
 [sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_ffle5"]
@@ -73,8 +74,7 @@ turbulence_noise_strength = 0.1
 script = ExtResource("1_wrkgd")
 
 [node name="IconParticles" type="GPUParticles2D" parent="."]
-amount = 12
-amount_ratio = 0.0
+amount = 10
 texture = SubResource("PlaceholderTexture2D_ffle5")
 lifetime = 1.6
 process_material = SubResource("ParticleProcessMaterial_m3c60")
@@ -90,14 +90,13 @@ max_speed_multiplier = 1.2
 
 [node name="ColorParticles" type="GPUParticles2D" parent="."]
 material = SubResource("CanvasItemMaterial_3ee3l")
-amount = 24
-amount_ratio = 0.0
+amount = 12
 texture = ExtResource("2_8py74")
 lifetime = 2.0
 process_material = SubResource("ParticleProcessMaterial_3vpao")
 
 [node name="FragmentTextureMarker" type="Node" parent="ColorParticles"]
-script = ExtResource("2_7qe5q")
+script = ExtResource("5_55t71")
 
 [node name="TintMarker" type="Node" parent="ColorParticles"]
 script = ExtResource("5_m3c60")

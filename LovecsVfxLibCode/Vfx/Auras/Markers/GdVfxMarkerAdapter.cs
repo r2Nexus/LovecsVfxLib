@@ -215,6 +215,8 @@ public sealed class GdVfxMarkerAdapter : IVfxMarker
         material.ParticlesAnimLoop = sheet.Loop;
 
         particles.Material = material;
+
+        ApplyParticleAnimationSpeed(particles, sheet);
     }
 
     private Node? GetTargetOrNull()
@@ -256,5 +258,31 @@ public sealed class GdVfxMarkerAdapter : IVfxMarker
         }
 
         return false;
+    }
+    
+    private static void ApplyParticleAnimationSpeed(GpuParticles2D particles, VfxSpriteSheet sheet)
+    {
+        if (!sheet.AnimSpeedMin.HasValue && !sheet.AnimSpeedMax.HasValue)
+            return;
+
+        if (particles.ProcessMaterial is not ParticleProcessMaterial material)
+        {
+            GD.PushWarning($"[GdVfxMarkerAdapter] Particle target '{particles.Name}' has no ParticleProcessMaterial for animation speed.");
+            return;
+        }
+
+        // Avoid mutating a shared sub-resource across scene instances.
+        if (!material.ResourceLocalToScene)
+        {
+            material = (ParticleProcessMaterial)material.Duplicate();
+            material.ResourceLocalToScene = true;
+            particles.ProcessMaterial = material;
+        }
+
+        float min = sheet.AnimSpeedMin ?? sheet.AnimSpeedMax!.Value;
+        float max = sheet.AnimSpeedMax ?? sheet.AnimSpeedMin!.Value;
+
+        material.SetParamMin(ParticleProcessMaterial.Parameter.AnimSpeed, min);
+        material.SetParamMax(ParticleProcessMaterial.Parameter.AnimSpeed, max);
     }
 }

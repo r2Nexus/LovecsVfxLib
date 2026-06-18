@@ -31,10 +31,25 @@ public readonly record struct VfxSlotValue
         string texturePath,
         int hFrames,
         int vFrames,
-        bool loop = false)
+        bool loop = false,
+        float? animSpeedMin = null,
+        float? animSpeedMax = null)
     {
         Texture2D texture = LoadTexture(texturePath);
-        return new VfxSpriteSheet(texture, hFrames, vFrames, loop);
+
+        if (animSpeedMin.HasValue && !animSpeedMax.HasValue)
+            animSpeedMax = animSpeedMin;
+
+        if (!animSpeedMin.HasValue && animSpeedMax.HasValue)
+            animSpeedMin = animSpeedMax;
+
+        return new VfxSpriteSheet(
+            texture,
+            hFrames,
+            vFrames,
+            loop,
+            animSpeedMin,
+            animSpeedMax);
     }
 
     public Texture2D AsTexture()

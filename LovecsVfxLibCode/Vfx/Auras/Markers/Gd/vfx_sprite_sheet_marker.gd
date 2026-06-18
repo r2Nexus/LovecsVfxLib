@@ -8,3 +8,4 @@ class_name VfxSpriteSheetMarker
 @export var slot_name: String = "sheet"
 @export var required: bool = false
 @export var target_path: NodePath
+

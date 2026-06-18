@@ -6,4 +6,7 @@ public readonly record struct VfxSpriteSheet(
     Texture2D Texture,
     int HFrames,
     int VFrames,
-    bool Loop);
+    bool Loop,
+    float? AnimSpeedMin = null,
+    float? AnimSpeedMax = null
+);

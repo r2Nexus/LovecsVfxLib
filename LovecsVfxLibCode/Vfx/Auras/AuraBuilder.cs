@@ -43,9 +43,19 @@ public sealed class AuraBuilder
         string texturePath,
         int hFrames,
         int vFrames,
-        bool loop = false)
+        bool loop = false,
+        float? animSpeedMin = null,
+        float? animSpeedMax = null)
     {
-        Config.SetSpriteSheet(slotName, texturePath, hFrames, vFrames, loop);
+        Config.SetSpriteSheet(
+            slotName,
+            texturePath,
+            hFrames,
+            vFrames,
+            loop,
+            animSpeedMin,
+            animSpeedMax);
+
         SyncIfNeeded();
         return this;
     }

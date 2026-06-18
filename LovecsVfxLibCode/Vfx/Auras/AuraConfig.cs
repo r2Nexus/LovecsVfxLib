@@ -35,13 +35,23 @@ public class AuraConfig
         return this;
     }
 
-    public AuraConfig SetSpriteSheet(
+    public void SetSpriteSheet(
         string slotName,
         string texturePath,
         int hFrames,
         int vFrames,
-        bool loop = false)
-        => Set(slotName, VfxSlotValue.FromSpriteSheet(texturePath, hFrames, vFrames, loop));
+        bool loop = false,
+        float? animSpeedMin = null,
+        float? animSpeedMax = null)
+    {
+        Set(slotName, VfxSlotValue.FromSpriteSheet(
+            texturePath,
+            hFrames,
+            vFrames,
+            loop,
+            animSpeedMin,
+            animSpeedMax));
+    }
 
     public AuraConfig SetPowerAmountRange(decimal minPowerAmount, decimal maxPowerAmount)
         => SetPowerAmountRange(() => minPowerAmount, () => maxPowerAmount);
