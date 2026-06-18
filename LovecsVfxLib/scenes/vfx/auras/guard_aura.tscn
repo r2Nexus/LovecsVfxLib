@@ -1,0 +1,53 @@
+[gd_scene load_steps=10 format=3 uid="uid://ouffle3a353m"]
+
+[ext_resource type="Script" uid="uid://cd0gp20jvmsg4" path="res://LovecsVfxLibCode/Vfx/Auras/Nodes/LovecAura.cs" id="1_k8qk2"]
+[ext_resource type="Script" uid="uid://cknmea1wefwh1" path="res://LovecsVfxLibCode/Vfx/Auras/Markers/Gd/vfx_texture_marker.gd" id="1_o06i8"]
+[ext_resource type="Script" uid="uid://c3nauwmlbw32l" path="res://LovecsVfxLibCode/Vfx/Auras/Markers/Gd/vfx_particle_power_scaling.gd" id="2_k8qk2"]
+
+[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_5y4wa"]
+size = Vector2(85, 85)
+
+[sub_resource type="Curve" id="Curve_7tjuk"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.25063938, 0.89723325), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_vrean"]
+curve = SubResource("Curve_7tjuk")
+
+[sub_resource type="Curve" id="Curve_1r50f"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.1764706, 0.51185775), 0.0, 0.0, 0, 0, Vector2(0.7442455, 0.53112656), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="CurveTexture" id="CurveTexture_pnfvv"]
+curve = SubResource("Curve_1r50f")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_ttvfr"]
+particle_flag_disable_z = true
+emission_shape = 3
+emission_box_extents = Vector3(180, 60, 1)
+direction = Vector3(0, 1, 0)
+spread = 12.0
+initial_velocity_min = -30.0
+initial_velocity_max = 30.0
+gravity = Vector3(0, 0, 0)
+scale_min = 1.5
+scale_max = 2.0
+scale_curve = SubResource("CurveTexture_pnfvv")
+alpha_curve = SubResource("CurveTexture_vrean")
+
+[node name="guard_aura" type="Node2D"]
+script = ExtResource("1_k8qk2")
+
+[node name="GPUParticles2D" type="GPUParticles2D" parent="."]
+amount = 5
+texture = SubResource("PlaceholderTexture2D_5y4wa")
+lifetime = 3.0
+process_material = SubResource("ParticleProcessMaterial_ttvfr")
+
+[node name="IconTexture" type="Node" parent="GPUParticles2D"]
+script = ExtResource("1_o06i8")
+
+[node name="PowerScaling" type="Node" parent="GPUParticles2D"]
+script = ExtResource("2_k8qk2")
+min_speed_multiplier = 0.9
+max_speed_multiplier = 1.1

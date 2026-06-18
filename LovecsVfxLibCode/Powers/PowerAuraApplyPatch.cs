@@ -1,4 +1,6 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Collections.Generic;
+using System.Reflection;
 using Godot;
 using HarmonyLib;
 using LovecsVfxLibCode.Vfx.Auras;
@@ -11,13 +13,8 @@ using MegaCrit.Sts2.Core.Models.Powers;
 namespace LovecsVfxLib.LovecsVfxLibCode.Powers;
 
 [HarmonyPatch]
-public static class DoomAuraApplyPatch
+public static class PowerAuraApplyPatch
 {
-    private const string DoomAuraKey = "LovecsVfxLib:DoomAura";
-    private const string DoomAuraScene = "res://LovecsVfxLib/scenes/vfx/auras/enchanted_aura.tscn";
-
-    private static readonly HashSet<DoomPower> Applied = new();
-
     public static MethodBase TargetMethod()
     {
         return AccessTools.Method(
@@ -43,27 +40,6 @@ public static class DoomAuraApplyPatch
     private static async Task ApplyAfterOriginal(Task originalTask, PowerModel power)
     {
         await originalTask;
-
-        if (power is DoomPower doom)
-            ApplyDoomAura(doom);
-    }
-
-    private static void ApplyDoomAura(DoomPower doom)
-    {
-        if (doom.Owner == null || doom.Owner.IsDead)
-            return;
-
-        if (!Applied.Add(doom))
-            return;
-
-        doom.WithAura(DoomAuraScene)
-            .WithKey(DoomAuraKey)
-            .Configure(aura =>
-            {
-                aura.Set("tint", Colors.Purple);
-                aura.SetPowerAmountRange(
-                    () => 0m,
-                    () => (decimal)doom.Owner.CurrentHp);
-            });
+        PowerAuraDefinitions.TryApply(power);
     }
 }

@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3 uid="uid://cusg4uiefdto4"]
+[gd_scene load_steps=19 format=3 uid="uid://cusg4uiefdto4"]
 
 [ext_resource type="Script" uid="uid://mb7hci8fjorh" path="res://LovecsVfxLibCode/Vfx/Auras/Nodes/DefaultLovecAura.cs" id="1_wrkgd"]
 [ext_resource type="Script" uid="uid://cknmea1wefwh1" path="res://LovecsVfxLibCode/Vfx/Auras/Markers/Gd/vfx_texture_marker.gd" id="2_7qe5q"]
@@ -9,6 +9,13 @@
 
 [sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_ffle5"]
 size = Vector2(64, 64)
+
+[sub_resource type="Curve" id="Curve_55t71"]
+_data = [Vector2(0.01023018, 0), 0.0, 0.0, 0, 0, Vector2(0.33248082, 0.833004), 0.0, 0.0, 0, 0, Vector2(1, 0.5054349), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_m3c60"]
+curve = SubResource("Curve_55t71")
 
 [sub_resource type="Curve" id="Curve_7qe5q"]
 _data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.25063938, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), -5.124995, 0.0, 0, 0]
@@ -22,15 +29,17 @@ resource_local_to_scene = true
 particle_flag_disable_z = true
 emission_shape_offset = Vector3(0, 50, 0)
 emission_shape = 1
-emission_sphere_radius = 90.0
+emission_sphere_radius = 110.0
 gravity = Vector3(0, -120, 0)
 linear_accel_min = -2.2351742e-06
 linear_accel_max = 49.999996
 scale_min = 0.5
 scale_max = 0.7
 scale_curve = SubResource("CurveTexture_55t71")
+alpha_curve = SubResource("CurveTexture_m3c60")
 
 [sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_3ee3l"]
+blend_mode = 1
 particles_animation = true
 particles_anim_h_frames = 3
 particles_anim_v_frames = 3
@@ -55,7 +64,7 @@ resource_local_to_scene = true
 particle_flag_disable_z = true
 emission_shape_offset = Vector3(0, 80, 0)
 emission_shape = 1
-emission_sphere_radius = 100.0
+emission_sphere_radius = 120.0
 angle_min = -720.0
 angle_max = 720.0
 initial_velocity_min = -30.0
@@ -74,6 +83,7 @@ turbulence_noise_strength = 0.1
 script = ExtResource("1_wrkgd")
 
 [node name="IconParticles" type="GPUParticles2D" parent="."]
+position = Vector2(0, 36)
 amount = 10
 texture = SubResource("PlaceholderTexture2D_ffle5")
 lifetime = 1.6
@@ -86,7 +96,6 @@ script = ExtResource("2_7qe5q")
 script = ExtResource("3_55t71")
 max_power_amount = 12.0
 min_speed_multiplier = 0.8
-max_speed_multiplier = 1.2
 
 [node name="ColorParticles" type="GPUParticles2D" parent="."]
 material = SubResource("CanvasItemMaterial_3ee3l")
@@ -104,5 +113,5 @@ script = ExtResource("5_m3c60")
 [node name="ColorPowerScaling" type="Node" parent="ColorParticles"]
 script = ExtResource("3_55t71")
 max_power_amount = 12.0
-min_speed_multiplier = 0.6
-max_speed_multiplier = 1.4
+min_speed_multiplier = 0.8
+max_speed_multiplier = 1.1

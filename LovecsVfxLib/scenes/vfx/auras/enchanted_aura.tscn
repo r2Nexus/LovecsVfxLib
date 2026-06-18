@@ -70,4 +70,4 @@ script = ExtResource("4_tue6r")
 [node name="PowerScalingMarker" type="Node" parent="GPUParticles2D"]
 script = ExtResource("5_py5wb")
 min_speed_multiplier = 0.8
-max_speed_multiplier = 1.5
+max_speed_multiplier = 1.1
