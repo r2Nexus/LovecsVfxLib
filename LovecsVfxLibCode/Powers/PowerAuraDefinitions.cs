@@ -23,7 +23,6 @@ public static class PowerAuraDefinitions
             configure: (doom, aura) =>
             {
                 aura.Set("tint", Colors.Purple);
-
                 aura.SetPowerAmountRange(
                     () => 0m,
                     () => doom.Owner.CurrentHp);
@@ -46,9 +45,34 @@ public static class PowerAuraDefinitions
             configure: (dexterity, aura) =>
             {
                 aura.UsePowerIcon();
+                aura.Set("tint", Colors.ForestGreen);
                 aura.SetPowerAmountRange(
                     () => 0m,
                     () => 8m);
+            }),
+        
+        [typeof(FrailPower)] = Aura<FrailPower>(
+            key: "FrailAura",
+            sceneFile: "guard_aura.tscn",
+            configure: (frail, aura) =>
+            {
+                aura.UsePowerIcon();
+                aura.Set("tint", Colors.DeepSkyBlue);
+                aura.SetPowerAmountRange(
+                    () => 0m,
+                    () => 8m);
+            }),
+        
+        [typeof(VulnerablePower)] = Aura<VulnerablePower>(
+            key: "VulnerableAura",
+            sceneFile: "guard_aura.tscn",
+            configure: (vulnerable, aura) =>
+            {
+                aura.UsePowerIcon();
+                aura.Set("tint", Colors.Tomato);
+                aura.SetPowerAmountRange(
+                    () => 0m,
+                    () => 12m);
             }),
     };
 
