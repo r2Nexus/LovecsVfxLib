@@ -12,3 +12,5 @@ riderModule.iml
 *kra~
 *.png~
 *autosave.kra
+*.idea
+.idea/
