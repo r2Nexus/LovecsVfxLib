@@ -74,6 +74,18 @@ public static class PowerAuraDefinitions
                     () => 0m,
                     () => 12m);
             }),
+        
+        [typeof(FocusPower)] = Aura<FocusPower>(
+            key: "FocusAura",
+            sceneFile: "focus_aura.tscn",
+            configure: (vulnerable, aura) =>
+            {
+                aura.UsePowerIcon();
+                aura.Set("tint", Colors.Cyan);
+                aura.SetPowerAmountRange(
+                    () => 0m,
+                    () => 10m);
+            })
     };
 
     public static bool TryApply(PowerModel power)
