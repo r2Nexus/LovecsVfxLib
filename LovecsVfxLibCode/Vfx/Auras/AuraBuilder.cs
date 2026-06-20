@@ -118,6 +118,37 @@ public sealed class AuraBuilder
 
         return this;
     }
+    
+    public AuraBuilder SetParticleScale(
+        string slotName,
+        float minScale,
+        float maxScale)
+    {
+        Config.Set(
+            slotName,
+            VfxSlotValue.FromParticleParamRange(
+                ParticleProcessMaterial.Parameter.Scale,
+                minScale,
+                maxScale));
+
+        SyncIfNeeded();
+        return this;
+    }
+    
+    public AuraBuilder SetParticleScale(
+        string slotName,
+        float scale)
+    {
+        Config.Set(
+            slotName,
+            VfxSlotValue.FromParticleParamRange(
+                ParticleProcessMaterial.Parameter.Scale,
+                scale,
+                scale));
+
+        SyncIfNeeded();
+        return this;
+    }
 
     public AuraBuilder LethalAt(decimal lethalAmount)
         => SetPowerAmountRange(lethalAmount, lethalAmount);

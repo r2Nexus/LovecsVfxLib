@@ -1,9 +1,10 @@
-[gd_scene load_steps=19 format=3 uid="uid://cusg4uiefdto4"]
+[gd_scene load_steps=20 format=3 uid="uid://cusg4uiefdto4"]
 
 [ext_resource type="Script" uid="uid://mb7hci8fjorh" path="res://LovecsVfxLibCode/Vfx/Auras/Nodes/DefaultLovecAura.cs" id="1_wrkgd"]
 [ext_resource type="Script" uid="uid://cknmea1wefwh1" path="res://LovecsVfxLibCode/Vfx/Auras/Markers/Gd/vfx_texture_marker.gd" id="2_7qe5q"]
 [ext_resource type="Texture2D" uid="uid://0cx50flkri5y" path="res://LovecsVfxLib/images/vfx/fragments.png" id="2_8py74"]
 [ext_resource type="Script" uid="uid://c3nauwmlbw32l" path="res://LovecsVfxLibCode/Vfx/Auras/Markers/Gd/vfx_particle_power_scaling.gd" id="3_55t71"]
+[ext_resource type="Script" uid="uid://dugtl4m8vhl2p" path="res://LovecsVfxLibCode/Vfx/Auras/Markers/Gd/vfx_partilce_param_marker.gd" id="4_m3c60"]
 [ext_resource type="Script" uid="uid://7hp77ircotc4" path="res://LovecsVfxLibCode/Vfx/Auras/Markers/Gd/vfx_sprite_sheet_marker.gd" id="5_55t71"]
 [ext_resource type="Script" uid="uid://c37ngqel2av4k" path="res://LovecsVfxLibCode/Vfx/Auras/Markers/Gd/vfx_color_marker.gd" id="5_m3c60"]
 
@@ -97,6 +98,10 @@ script = ExtResource("3_55t71")
 max_power_amount = 12.0
 min_speed_multiplier = 0.8
 
+[node name="ScaleMarker" type="Node" parent="IconParticles"]
+script = ExtResource("4_m3c60")
+slot_name = "iconScale"
+
 [node name="ColorParticles" type="GPUParticles2D" parent="."]
 material = SubResource("CanvasItemMaterial_3ee3l")
 amount = 12
@@ -115,3 +120,7 @@ script = ExtResource("3_55t71")
 max_power_amount = 12.0
 min_speed_multiplier = 0.8
 max_speed_multiplier = 1.1
+
+[node name="ScaleMarker" type="Node" parent="ColorParticles"]
+script = ExtResource("4_m3c60")
+slot_name = "fragmentScale"

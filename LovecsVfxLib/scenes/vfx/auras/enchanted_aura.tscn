@@ -1,10 +1,11 @@
-[gd_scene load_steps=14 format=3 uid="uid://cal46kxw58iiu"]
+[gd_scene load_steps=15 format=3 uid="uid://cal46kxw58iiu"]
 
 [ext_resource type="Script" uid="uid://cd0gp20jvmsg4" path="res://LovecsVfxLibCode/Vfx/Auras/Nodes/LovecAura.cs" id="1_kkgw3"]
 [ext_resource type="Texture2D" uid="uid://bfbaad1sdbrgn" path="res://LovecsVfxLib/images/vfx/galactic_alphabet.png" id="2_kkgw3"]
 [ext_resource type="Script" uid="uid://c37ngqel2av4k" path="res://LovecsVfxLibCode/Vfx/Auras/Markers/Gd/vfx_color_marker.gd" id="3_ql2pa"]
 [ext_resource type="Script" uid="uid://7hp77ircotc4" path="res://LovecsVfxLibCode/Vfx/Auras/Markers/Gd/vfx_sprite_sheet_marker.gd" id="4_tue6r"]
 [ext_resource type="Script" uid="uid://c3nauwmlbw32l" path="res://LovecsVfxLibCode/Vfx/Auras/Markers/Gd/vfx_particle_power_scaling.gd" id="5_py5wb"]
+[ext_resource type="Script" uid="uid://dugtl4m8vhl2p" path="res://LovecsVfxLibCode/Vfx/Auras/Markers/Gd/vfx_partilce_param_marker.gd" id="6_tue6r"]
 
 [sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_5c670"]
 blend_mode = 1
@@ -29,8 +30,8 @@ point_count = 2
 curve = SubResource("Curve_py5wb")
 
 [sub_resource type="Curve" id="Curve_j451y"]
-_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.24552429, 0.65887403), 0.0, 0.0, 0, 0, Vector2(0.7493606, 1), 0.0, 0.0, 0, 0, Vector2(1, 0.5224236), 0.0, 0.0, 0, 0]
-point_count = 4
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.24552429, 0.65887403), 1.0738513, 1.0738513, 0, 0, Vector2(0.7493606, 1), 0.0, 0.0, 0, 0, Vector2(0.9283887, 0.6210475), -3.3214836, -3.3214836, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 5
 
 [sub_resource type="CurveTexture" id="CurveTexture_n0lau"]
 curve = SubResource("Curve_j451y")
@@ -71,3 +72,6 @@ script = ExtResource("4_tue6r")
 script = ExtResource("5_py5wb")
 min_speed_multiplier = 0.8
 max_speed_multiplier = 1.1
+
+[node name="ScaleMarker" type="Node" parent="GPUParticles2D"]
+script = ExtResource("6_tue6r")

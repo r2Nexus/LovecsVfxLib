@@ -38,7 +38,8 @@ public sealed class GdVfxMarkerAdapter : IVfxMarker
         bool isKnownMarker =
             HasProperty(node, "texture_target") ||
             HasProperty(node, "color_target") ||
-            HasProperty(node, "sprite_sheet_marker");
+            HasProperty(node, "sprite_sheet_marker") ||
+            HasProperty(node, "particle_param_marker");
 
         if (!isKnownMarker)
             return false;
@@ -66,10 +67,59 @@ public sealed class GdVfxMarkerAdapter : IVfxMarker
             ApplySpriteSheet(value);
             return;
         }
+        
+        if (HasProperty(_node, "particle_param_marker"))
+        {
+            ApplyParticleParamRange(value);
+            return;
+        }
 
         GD.PushWarning($"[GdVfxMarkerAdapter] Unknown marker '{_node.Name}'.");
     }
 
+    private void ApplyParticleParamRange(VfxSlotValue value)
+    {
+        VfxSlotValue.VfxParticleParamRange range;
+
+        try
+        {
+            range = value.AsParticleParamRange();
+        }
+        catch (Exception e)
+        {
+            GD.PushWarning(
+                $"[GdVfxMarkerAdapter] Slot '{SlotName}' expected particle parameter range: {e.Message}");
+            return;
+        }
+
+        Node? target = GetTargetOrNull();
+
+        if (target is not GpuParticles2D particles)
+        {
+            string actual = target == null ? "null" : target.GetType().Name;
+            GD.PushWarning(
+                $"[GdVfxMarkerAdapter] Slot '{SlotName}' particle parameter target must be GpuParticles2D. Actual: {actual}.");
+            return;
+        }
+
+        if (particles.ProcessMaterial is not ParticleProcessMaterial material)
+        {
+            GD.PushWarning(
+                $"[GdVfxMarkerAdapter] Particle target '{particles.Name}' has no ParticleProcessMaterial.");
+            return;
+        }
+
+        if (!material.ResourceLocalToScene)
+        {
+            material = (ParticleProcessMaterial)material.Duplicate();
+            material.ResourceLocalToScene = true;
+            particles.ProcessMaterial = material;
+        }
+
+        material.SetParamMin(range.Parameter, range.Min);
+        material.SetParamMax(range.Parameter, range.Max);
+    }
+    
     private void ApplyTexture(VfxSlotValue value)
     {
         Texture2D texture;

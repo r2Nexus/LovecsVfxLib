@@ -8,7 +8,8 @@ public enum VfxSlotValueKind
     Texture,
     TexturePath,
     Color,
-    SpriteSheet
+    SpriteSheet,
+    ParticleParamRange
 }
 
 public readonly record struct VfxSlotValue
@@ -99,5 +100,31 @@ public readonly record struct VfxSlotValue
             throw new InvalidOperationException($"Failed to load VFX texture: {path}");
 
         return texture;
+    }
+    
+    public readonly record struct VfxParticleParamRange(
+        ParticleProcessMaterial.Parameter Parameter,
+        float Min,
+        float Max);
+    
+    public static implicit operator VfxSlotValue(VfxParticleParamRange range)
+        => new(VfxSlotValueKind.ParticleParamRange, range);
+
+    public static VfxSlotValue FromParticleParamRange(
+        ParticleProcessMaterial.Parameter parameter,
+        float min,
+        float max)
+    {
+        return new VfxParticleParamRange(parameter, min, max);
+    }
+
+    public VfxParticleParamRange AsParticleParamRange()
+    {
+        if (Kind == VfxSlotValueKind.ParticleParamRange &&
+            Value is VfxParticleParamRange range)
+            return range;
+
+        throw new InvalidOperationException(
+            $"Expected particle parameter range, got {Kind}.");
     }
 }

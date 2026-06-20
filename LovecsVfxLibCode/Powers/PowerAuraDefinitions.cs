@@ -27,6 +27,20 @@ public static class PowerAuraDefinitions
                     () => 0m,
                     () => doom.Owner.CurrentHp);
             }),
+        
+        [typeof(PoisonPower)] = Aura<PoisonPower>(
+            key: "PoisonAura",
+            sceneFile: "enchanted_aura.tscn",
+            configure: (doom, aura) =>
+            {
+                aura.Set("tint", Colors.Green);
+                aura.SetSpriteSheet("sheet","res://LovecsVfxLib/images/vfx/skull.png", 2, 2, true, 2f,4f);
+                aura.SetParticleScale("scale", 0.5f,1f);
+                aura.SetPowerAmountRange(
+                    () => 0m,
+                    () => doom.Owner.CurrentHp);
+            }),
+        
         [typeof(StrengthPower)] = Aura<StrengthPower>(
             key: "StrengthAura",
             sceneFile: "DefaultLovecAura.tscn",

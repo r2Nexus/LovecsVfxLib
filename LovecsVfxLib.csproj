@@ -66,6 +66,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <Content Include="LovecsVfxLibCode\Vfx\Auras\Markers\Gd\vfx_partilce_param_marker.gd" />
       <Content Include="LovecsVfxLibCode\Vfx\Auras\Markers\Gd\vfx_texture_marker.gd" />
       <Content Include="README.md" />
     </ItemGroup>
