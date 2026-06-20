@@ -18,7 +18,6 @@ power.WithAura(LovecAuras.Enchanted)
     .Configure(aura =>
     {
         aura.Set(VfxSlots.Tint, Colors.Purple);
-        aura.UsePowerIcon();
 
         aura.SetPowerAmountRange(
             () => 0m,
@@ -26,7 +25,7 @@ power.WithAura(LovecAuras.Enchanted)
     });
 ```
 
-This attaches the `Enchanted` aura scene to the power owner, uses the power icon, tints the aura purple, and scales the aura based on the power amount range.
+This attaches the `Enchanted` aura scene to the power owner, tints the aura purple, and scales the aura based on the power amount range.
 
 ## Built-in aura templates
 
