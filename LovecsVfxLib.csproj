@@ -67,6 +67,7 @@
 
     <ItemGroup>
       <Content Include="LovecsVfxLibCode\Vfx\Auras\Markers\Gd\vfx_texture_marker.gd" />
+      <Content Include="README.md" />
     </ItemGroup>
 
     <Target Name="CheckDependencyPaths">
