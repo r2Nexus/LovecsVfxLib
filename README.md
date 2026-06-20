@@ -18,7 +18,6 @@ power.WithAura(LovecAuras.Enchanted)
     .Configure(aura =>
     {
         aura.Set(VfxSlots.Tint, Colors.Purple);
-        aura.UsePowerIcon();
 
         aura.SetPowerAmountRange(
             () => 0m,
@@ -26,7 +25,7 @@ power.WithAura(LovecAuras.Enchanted)
     });
 ```
 
-This attaches the `Enchanted` aura scene to the power owner, uses the power icon, tints the aura purple, and scales the aura based on the power amount range.
+This attaches the `Enchanted` aura scene to the power owner, tints the aura purple, and scales the aura based on the power amount range.
 
 ## Built-in aura templates
 
@@ -190,7 +189,7 @@ aura.SetSpriteSheet("sheet", "res://MyMod/images/vfx/sheet.png", 4, 4);
 
 ## One-shot VFX
 
-`LovecVfx` contains quick helpers for simple hit-position effects.
+`LovecVfx` contains quick helpers for simple vanilla compatible VFX.
 
 ```csharp
 using LovecsVfxLib;
@@ -202,8 +201,6 @@ LovecVfx.Charm(target);
 LovecVfx.Bite(target);
 LovecVfx.Bloom(target);
 ```
-
-These instantiate the effect at the target creature's VFX spawn position.
 
 ## Notes
 
