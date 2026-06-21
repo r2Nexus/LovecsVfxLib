@@ -3,7 +3,7 @@
   "name": "Lovec's Vfx Lib",
   "author": "lovecMC",
   "description": "Adds optional visual auras to vanilla powers and provides reusable VFX tools for other Slay the Spire 2 mods. Mainly useful as a dependency, but also includes configurable vanilla power effects.",
-  "version": "v0.1.0",
+  "version": "v0.1.1",
   "has_pck": true,
   "has_dll": true,
   "dependencies": [

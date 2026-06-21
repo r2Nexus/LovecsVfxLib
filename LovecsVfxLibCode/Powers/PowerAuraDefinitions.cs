@@ -22,7 +22,7 @@ public static class PowerAuraDefinitions
         [typeof(DoomPower)] = Aura<DoomPower>(
             key: "DoomAura",
             isEnabled: () => LovecsVfxConfig.EnableDoomAura,
-            sceneFile: "enchanted_aura.tscn",
+            sceneFile: LovecAuras.Enchanted,
             configure: (doom, aura) =>
             {
                 aura.Set("tint", Colors.Purple);
@@ -34,7 +34,7 @@ public static class PowerAuraDefinitions
         [typeof(PoisonPower)] = Aura<PoisonPower>(
             key: "PoisonAura",
             isEnabled: () => LovecsVfxConfig.EnablePoisonAura,
-            sceneFile: "enchanted_aura.tscn",
+            sceneFile: LovecAuras.Enchanted,
             configure: (doom, aura) =>
             {
                 aura.Set("tint", Colors.Green);
@@ -48,7 +48,7 @@ public static class PowerAuraDefinitions
         [typeof(StrengthPower)] = Aura<StrengthPower>(
             key: "StrengthAura",
             isEnabled: () => LovecsVfxConfig.EnableStrengthAura,
-            sceneFile: "DefaultLovecAura.tscn",
+            sceneFile: LovecAuras.Default,
             configure: (strength, aura) =>
             {
                 aura.Set("tint", Colors.Tomato);
@@ -61,7 +61,7 @@ public static class PowerAuraDefinitions
         [typeof(DexterityPower)] = Aura<DexterityPower>(
             key: "DexterityAura",
             isEnabled: () => LovecsVfxConfig.EnableDexterityAura,
-            sceneFile: "guard_aura.tscn",
+            sceneFile: LovecAuras.Guard,
             configure: (dexterity, aura) =>
             {
                 aura.UsePowerIcon();
@@ -74,7 +74,7 @@ public static class PowerAuraDefinitions
         [typeof(FrailPower)] = Aura<FrailPower>(
             key: "FrailAura",
             isEnabled: () => LovecsVfxConfig.EnableFrailAura,
-            sceneFile: "guard_aura.tscn",
+            sceneFile: LovecAuras.Guard,
             configure: (frail, aura) =>
             {
                 aura.UsePowerIcon();
@@ -87,7 +87,7 @@ public static class PowerAuraDefinitions
         [typeof(VulnerablePower)] = Aura<VulnerablePower>(
             key: "VulnerableAura",
             isEnabled: () => LovecsVfxConfig.EnableVulnerableAura,
-            sceneFile: "guard_aura.tscn",
+            sceneFile: LovecAuras.Guard,
             configure: (vulnerable, aura) =>
             {
                 aura.UsePowerIcon();
@@ -100,7 +100,7 @@ public static class PowerAuraDefinitions
         [typeof(FocusPower)] = Aura<FocusPower>(
             key: "FocusAura",
             isEnabled: () => LovecsVfxConfig.EnableFocusAura,
-            sceneFile: "focus_aura.tscn",
+            sceneFile: LovecAuras.Focus,
             configure: (vulnerable, aura) =>
             {
                 aura.UsePowerIcon();
