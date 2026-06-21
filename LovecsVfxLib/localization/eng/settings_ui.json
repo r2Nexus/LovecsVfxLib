@@ -1,0 +1,16 @@
+﻿{
+  "LOVECSVFXLIB.mod_title": "Lovecs VFX Lib",
+
+  "LOVECSVFXLIB-VANILLA_POWER_AURAS.title": "Vanilla Power Auras",
+  "LOVECSVFXLIB-ENABLE_VANILLA_POWER_AURAS.title": "Enable ALL vanilla power auras",
+
+  "LOVECSVFXLIB-INDIVIDUAL_VANILLA_POWER_AURAS.title": "Toggle vanilla power auras",
+
+  "LOVECSVFXLIB-ENABLE_STRENGTH_AURA.title": "Strength aura",
+  "LOVECSVFXLIB-ENABLE_DEXTERITY_AURA.title": "Dexterity aura",
+  "LOVECSVFXLIB-ENABLE_DOOM_AURA.title": "Doom aura",
+  "LOVECSVFXLIB-ENABLE_FRAIL_AURA.title": "Frail aura",
+  "LOVECSVFXLIB-ENABLE_VULNERABLE_AURA.title": "Vulnerable aura",
+  "LOVECSVFXLIB-ENABLE_POISON_AURA.title": "Poison aura",
+  "LOVECSVFXLIB-ENABLE_FOCUS_AURA.title": "Focus aura"
+}

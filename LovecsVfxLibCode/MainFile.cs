@@ -1,6 +1,8 @@
 using System.Reflection;
+using BaseLib.Config;
 using Godot;
 using HarmonyLib;
+using LovecsVfxLib.LovecsVfxLibCode.Config;
 using MegaCrit.Sts2.Core.Modding;
 
 namespace LovecsVfxLib.LovecsVfxLibCode;
@@ -16,6 +18,8 @@ public partial class MainFile : Node
 
     public static void Initialize()
     {
+        ModConfigRegistry.Register(ModId, new LovecsVfxConfig());
+        
         var assembly = Assembly.GetExecutingAssembly();
         Godot.Bridge.ScriptManagerBridge.LookupScriptsInAssembly(assembly);
         
